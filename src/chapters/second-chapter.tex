@@ -1,22 +1,54 @@
 \chapter{State of the Art}
 \label{chapter:second-chapter}
 
-Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generically refers to a variety of program forms: viruses, worms, Trojan horses and spyware \cite{mining-specifications}.
+\section{Malware types}
+\label{sec:mal-types}
 
-Over time, the approach in detecting malware has evolved from analyzing the contents of infected executable files towards identifying malicious or potentially malicious behavior patterns. This change in thought happened because malware writers started to employ different obfuscation methods to hide the malicious behavior.
+Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generically refers to a variety of program forms: viruses, worms, Trojan horses and spyware.
 
-Behavior detection is usually accomplished by static analysis, scanning the executable file, or by dynamic analysis, running the executable and monitoring it's actions.
+A virus is a program that attempts to replicate itself into other executable files by injecting or replacing code. When the infected programs are run, they can infect other ones in turn. They tipically target common programs which are found on most machines and executables and copy themselves to key directories.
 
-Signature based malware detectors use a list of signatures (signature database) to identify known viruses. If a part of a program matches a signature entry from the list, then it is classified as malware. This detection method performes very poorly when confrunted with new samples because the signature is unknown. Also, malware writers can easily avoid detection from this type of detectors by using obfuscation techniques in their programs, like polymorphism or metamorphism.
+Worms are similar to viruses, only that they spread over the network to other hosts which have the same vulnerability as the initial host. This is done by performing network port scans, DNS queries and then trying to infect other machines. Also, this type of malware usually downloads a second program from a remote server.
 
-Semantics-aware malware detectors can overcome this weakness by using specification of malicious behavior which are not affected by polymorphic malware. Although this form of malware can change the executable’s image and recompile itself, the program’s behavior does not change, thus making behavior-based detection possible. Another advantage of this type of detector is that it can also successfully classify unknown malware.
+Trojan horses, or Trojans, are non-self-replicating code that try to gain privileged access to an operating system and while they seem to be performing a legitimate action they deliver a malicious payload. The payload often contains a backdoor for the attacker that gives him access to the computer or a botnet to send spam or perform Denial-of-service attacks.
 
-The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec-mining algorithm developed by Christodorescu et al. [1] provides a method for automating this otherwise time consuming task. Their algorithm proposed collecting execution traces from malware and benign programs, constructing the corresponding dependence graphs and then computing the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns.
+Spyware is software created for gathering information without the user's consent. This kind of malware is usually installed without the knowledge of the user or by using deceptive tactics \cite{mal-behavior-analysis}.
 
-The malspec-mining algorithm was implemented and used on a Windows operating system with notable results \cite{mining-specifications}.
+\section{Avoiding detection}
+\label{sec:avoid-det}
+
+Malware and antimalware software evolution is tightly coupled: when detection methods become more efficient, malware writters use better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of antimalware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing API-calling behavior, polymorphic and metamorphic malware.
+
+Malware writers obscure API-calling behavior by using indirect calls. In this respect, API calls can be achieved by using hard coded addresses but this method is incompatible with different versions of the operating system. Another method commonly employed is to define homonymy functions that first locate the API functions addresses and then use the stored address. Also, arrays can be used to store the API function name and the relocation address \cite{static-detection-behavior}.
+
+Polymorphic viruses use a polymorphic engine to change its executable while keeping the original function intact. A common technique to ``morph'' viruses is to encrypt the malicious payload and decrypt it at runtime. The encrypted code will then apear to be meaningless and it will be ignored. To obfuscate the decryption routine, the code is transformed by inserting \textbf{nop} instructions, permuting register allocation, reordering instructions and inserting jump instructions to maintain the semantics.
+
+Metamorphic viruses also use an engine to change their code in a variety of ways, such as code transposition and substituting instruction sequences with equivalent ones. In addition to this, they interweave their code with the original program's code to trick heuristic detection methods. An important difference between a metamorphic engine and a polymorphic one is that the first can rewrite itself while the second cannot \cite{testing-mal-det}.
+
+\section{Malware detection}
+\label{sec:mal-detection}
+
+Malware detectors are developed by performing analysis on samples gathered through various means: honeypots, web crawlers, spam traps and security analysts that collect them from infected computers. Bayer \textit{et al.} \cite{current-mal-behavior} provided insight into common behavior by analyzing almost one million malware samples by monitoring their network activity and tracking data flows.
+
+Bayer \textit{et al.} created a platform, named Anubis, for the dynamic analysis of malware samples which targeted Windows. The behavior of malware samples was monitored for file system, registry, network and botnet activity, GUI windows and sandbox detection. The statistics they presented offer insight into common malware behavior and give a hint to what the main goal of malware detectors should be.
+
+Signature based malware detectors use a list of signatures (signature database) to identify known viruses. The signatures are computed by applying a hash function on the malware file. If a part of a program matches a signature entry from the list, then it is classified as malware. This detection method performes very poorly when confrunted with new samples because the signature is unknown. Also, malware writers can easily avoid detection from this type of detectors by using obfuscation techniques in their programs, like polymorphism or metamorphism \cite{mining-specifications}. 
+
+Over time, the approach in detecting malware has evolved from analyzing the contents of infected executable files towards identifying malicious or potentially malicious behavior patterns. These patterns are extracted from the malware sample by static or dynamic analysis.
+
+Static analysis of the executable involves scanning the file for particular instruction sequences or different API calls. In order to avoid detection from this type of analysis, attackers attempt to obscure their API-calling behavior or they use a polymorphic engine.
+
+Another method for analysis is to monitor the behavior of the malicious program during runtime in a contained environment, otherwise known as dynamic analysis. This method monitors the malware's interraction with the operating system and the network traffic it produces in order to determine its behavior.
+
+Semantics-aware malware detectors can overcome the problems posed by obfuscation by using specifications of malicious behavior which are not affected by polymorphic malware. By using a higher-level specification, different versions or implementations of malware which perform the same behavior can be detected. Another advantage of this type of detector is that it can also successfully classify unknown malware \cite{semantics-based-detection}.
+
+\section{Malspec-Mining Algorithm}
+\label{sec:malspec-alg}
+
+The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec-mining algorithm developed by Christodorescu \textit{et al.} \cite{mining-specifications} provides a method for automating this otherwise time consuming task. 
+
+Their algorithm proposed collecting execution traces from malware and benign programs, constructing the corresponding dependence graphs and then computing the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
+
+The malspec-mining algorithm was implemented and tested on a Windows operating system and, although it identified a large number of malware specifications, it managed to capture most of the specifications that were indicated by specialists \cite{mining-specifications}.
 
 In this paper we present an implementation of this algorithm for GNU/Linux based operating systems. In order to capture a program’s behavior we developed a system call interceptor and a network traffic interceptor as Linux kernel modules. Then, a user space program would read the traces from the kernel modules and construct a dependence graph by interpreting the parameter type, direction and value of the recorded system calls. Finally, the malspec-mining algorithm is called, which will generate the malicious behavior specifications.
-
-This paper is organized as follows: in section 2 we describe the Windows implementation of the algorithm by Christodorescu et al. and other related work, in section 3 we reveal our own architecture and in section 4 we present our implementation. Section 5 shows the results obtained by our implementation so far and section 6 presents the conclusions and future work.
-
-
