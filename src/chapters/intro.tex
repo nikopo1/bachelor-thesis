@@ -1,8 +1,16 @@
 \chapter{Introduction}
 \label{chapter:intro}
 
-From large corporations to the average user, computer and network environment security is an important requirement to which malware is a threat. Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation.
+From large corporations to the average user, computer and network environment security is an important requirement to which malware is a threat. Malicious software is a program that has been written by an attacker to fulfill a harmful intent. In order to achieve this, the program has to interract with the victim's operating system..
 
-Currently, malware written for Windows operating systems are more common than those written for Linux. Considering that operating systems which are based on the Linux kernel, such as Android, are are becoming more wide-spread, we can assume that better security for them will soon become a necessity. This supports the need for developing better tools for Linux malware analysis and improving malware detection methods.
+The number of users of a specific operating system is directly correlated to the degree of interest malware writers take in developing software to target that specific operating system. Due to Linux's increasing popularity, better security for operating systems that are based on the Linux kernel has become a necessity. This supports the need for developing tools for Linux malware analysis and improving malware detection methods.
 
-This is the motivation for the project described in this paper: developing a Linux malware behavior miner. 
+Earlier detection methods focused on analyzing the contents of the executable file of the malware program, such as identifying instruction sequences which were characteristic for specific malware instances. These methods performed poorly when confrunted with unknown malware or new variants of existing ones. Also, in response, attackers started to write malware that modifies its own file while replicating itself, thus eluding these detection methods.
+
+This resulted in a switch to developing behavior based detection systems that are independent from the exact contents of the executable file. Therefore, when analyzing malware samples, analysts started to search for program behavior patterns that suggest a malicious intent. In order for these patterns to work, programs need a higher-level common behavior specification.
+
+The system call interface meets this requirement as malware needs to interract with the operating system to achieve its goals and it common to all malware. A tipical malware example would be an executable file that replicates itself by reading its own file and then copying it to system directories. This can be captured in a behavior pattern which, compiled into malware specifications, can then be used by malware detectors in order to classify programs based on their behavior.
+
+The project presented in this thesis is a Linux tool for automatically searching for malicious program behavior patterns. This tool is a Linux implementation of the malware specification mining algorithm, which identifies these behavior patterns by comparing known malware samples to known benign programs. These patterns are a collection of Linux system call parameter dependencies that capture the malicious behavior.
+
+This tool we developed is intended to be used by malware specialists in order

@@ -1,0 +1,22 @@
+\chapter{State of the Art}
+\label{chapter:second-chapter}
+
+Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generically refers to a variety of program forms: viruses, worms, Trojan horses and spyware \cite{mining-specifications}.
+
+Over time, the approach in detecting malware has evolved from analyzing the contents of infected executable files towards identifying malicious or potentially malicious behavior patterns. This change in thought happened because malware writers started to employ different obfuscation methods to hide the malicious behavior.
+
+Behavior detection is usually accomplished by static analysis, scanning the executable file, or by dynamic analysis, running the executable and monitoring it's actions.
+
+Signature based malware detectors use a list of signatures (signature database) to identify known viruses. If a part of a program matches a signature entry from the list, then it is classified as malware. This detection method performes very poorly when confrunted with new samples because the signature is unknown. Also, malware writers can easily avoid detection from this type of detectors by using obfuscation techniques in their programs, like polymorphism or metamorphism.
+
+Semantics-aware malware detectors can overcome this weakness by using specification of malicious behavior which are not affected by polymorphic malware. Although this form of malware can change the executable’s image and recompile itself, the program’s behavior does not change, thus making behavior-based detection possible. Another advantage of this type of detector is that it can also successfully classify unknown malware.
+
+The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec-mining algorithm developed by Christodorescu et al. [1] provides a method for automating this otherwise time consuming task. Their algorithm proposed collecting execution traces from malware and benign programs, constructing the corresponding dependence graphs and then computing the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns.
+
+The malspec-mining algorithm was implemented and used on a Windows operating system with notable results \cite{mining-specifications}.
+
+In this paper we present an implementation of this algorithm for GNU/Linux based operating systems. In order to capture a program’s behavior we developed a system call interceptor and a network traffic interceptor as Linux kernel modules. Then, a user space program would read the traces from the kernel modules and construct a dependence graph by interpreting the parameter type, direction and value of the recorded system calls. Finally, the malspec-mining algorithm is called, which will generate the malicious behavior specifications.
+
+This paper is organized as follows: in section 2 we describe the Windows implementation of the algorithm by Christodorescu et al. and other related work, in section 3 we reveal our own architecture and in section 4 we present our implementation. Section 5 shows the results obtained by our implementation so far and section 6 presents the conclusions and future work.
+
+
