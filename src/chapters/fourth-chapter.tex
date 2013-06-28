@@ -1,0 +1,96 @@
+\chapter{Implementation}
+\label{chapter:fourth-chapter}
+
+\project\ was implemented in C++, a natural choice considering we had to comunicate with the Linux kernel modules which are implemented in C. Both the kernel module and the userspace application use the same header file that contains the common data structures.
+
+\section{System Call Interceptor Driver}
+\label{fourth:design}
+
+The System Call Interceptor Driver (SCID) can be configured by giving the pid of the process as an argument at module insertion or by opening the device and calling \code{ioctl}. The system calls to be monitored can only be configured by \code{ioctl}.
+
+This driver logs only the system call number and the arguments and return values. The system calls are intercepted by replacing the original value of entry in the system call table with the address of an interceptor function which will run the system call and it will perform the necessary logging.
+
+System call history is implemented with a queue, which contains the recorded system call values and the actual system call number. When an \code{ioctl} read call is received from userspace, it will remove and return the first entry in the queue. It is also possible to clear the entire log history if needed or to get the total number of entries from the queue.
+
+The kernel module uses the \code{syscall_params} struct to retrieve the parameters from the stack when intercepting system calls. The data structure returned by the kernel is called \code{sctrace_t} and it contains the system call number, a syscall_params struct with the argument values and the return value.The following listing contains the definitions for the data structures used by the kernel module.
+
+\lstset{language=C,caption=SCID data structures,label=lst:scid-struct}
+\begin{lstlisting}
+/* data struct for syscall intercepting */
+struct syscall_params {
+	long ebx, ecx, edx, esi, edi, ebp, eax;
+};
+
+/* data struct for read syscall history */
+typedef struct _sctrace_t {
+	int sc_no;
+	struct syscall_params sc_params;
+	long ret;
+} sctrace_t;
+\end{lstlisting}
+
+The SCID module \code{ioctl} commands are defined using the macros provided by the Linux kernel. For the necessary code value required in the kernel macros we chose \code{0xA1}, which is currently unused according to the documentation file in the kernel.
+
+\lstset{language=C,caption=Command macros for ioctl,label=lst:scid-ioctl}
+\begin{lstlisting}
+#define IOCTL_SET_PID		_IOW(0xA1, 1, int)
+#define IOCTL_ADD_SYSCALL	_IOW(0xA1, 2, int)
+#define IOCTL_DEL_SYSCALL	_IOW(0xA1, 3, int)
+#define IOCTL_CLEAR_HISTORY	_IO(0xA1, 4)
+#define IOCTL_COUNT_HISTORY	_IOR(0xA1, 5, int)
+#define IOCTL_READ_HISTORY	_IOR(0xA1, 6, sctrace_t)
+\end{lstlisting}
+
+\begin{itemize}
+	\item \code{IOCTL_SET_PID} sets the pid of the process that will be monitored
+	\item \code{IOCTL_ADD_SYSCALL} start monitoring a system call
+	\item \code{IOCTL_DEL_SYSCALL} stop monitoring a system call
+	\item \code{IOCTL_CLEAR_HISTORY} deletes all entries with trace information
+	\item \code{IOCTL_COUNT_HISTORY} returns the number of trace entries
+	\item \code{IOCTL_READ_HISTORY} get and remove the first trace entry
+\end{itemize}
+
+\section{Reading traces}
+\label{fourth:design}
+
+The entries recorded by the SCID module do not contain any type and direction information about the system call. Therefore, in order to successfully identify def-use dependences, the type and direction have to be properly set in a \code{syscall_t} struct, which is defined below, before the graph is constructed.
+
+\lstset{language=C,caption=parameter data structures,label=lst:param-struct}
+\begin{lstlisting}
+/* param data structure to describe a syscall's parameters */
+#define MAX_NUM_PARAM	8
+
+typedef struct param {
+	unsigned char type; /* fd, int, unsigned int, char*, void*, unsigned short, size_t */
+	unsigned char dir;  /* 1 in, 2 out, 3 inout */
+	long value;
+} param_t;
+
+typedef struct _syscall_t {
+	int syscall_no;               /* the system call number */
+	param_t param[MAX_NUM_PARAM]; /* last element is the return value */
+} syscall_t;
+\end{lstlisting}
+
+The \code{syscall_t} struct contains a param array with a maximum of 8 argument entries. The first 7 entries are used for the register values of the system call and the 8\ts{th} entry holds the return value.
+Possible argument directions are  in, out and inout, while data types considered are \code{int}, \code{unsigned int}, file descriptor, \code{char*}, \code{void*}, \code{unsigned short} and \code{size_t}.
+
+Each program is run separately by creating a new process, making it yield the processor by waiting on a named semaphore and then replacing its image with \code{execve}. The new process has to be forced to yield the processor in order for the parent process to have sufficient time to set the child’s process pid as the target for the interceptor modules. Otherwise, a partial system call trace would be obtained instead and results would be compromised. 
+
+After the parent process has configured the kernel module to monitor its child process, it increments the semaphore to enable it to continue execution. After that, the parent process waits for the child process to end and then it starts reading the execution trace.
+
+\section{Building dependence graphs}
+\label{fourth:design}
+
+The execution trace inputted is used to create a graph for the sample program. Each node of the graph will contain a \code{syscall_t} struct. On creation, each graph object receives an array of these structs from which to create the graph’s nodes.
+
+After the nodes are created, each pair of nodes is verified for def-use dependences and if such dependencies exist then a new edge is added in a vector as a pair of node pointers. To determine if a def-use dependency exists between two nodes, the two \code{param} arrays from the \code{syscall_t} structs are compared.
+
+In addition to system call information, each node contains a unique identification number (or index) in order to uniquely identify nodes within the same graph, even if they have the same system call number and argument values.
+
+Although file descriptors are returned as integer values in Linux, they are treated as different data types because integer values are a common argument type for system calls. 
+
+Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes.
+
+\section{Malspec algorithm}
+\label{fourth:design}
