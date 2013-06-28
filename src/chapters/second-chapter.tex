@@ -1,6 +1,8 @@
 \chapter{State of the Art}
 \label{chapter:second-chapter}
 
+Computer security mostly refers to the mechanisms that are used to protect computers and networks from different threats. Although this field deals with many security related issues, one of the major threats to computer security is malware.
+
 \section{Malware types}
 \label{sec:mal-types}
 
@@ -12,7 +14,11 @@ Worms are similar to viruses, only that they spread over the network to other ho
 
 Trojan horses, or Trojans, are non-self-replicating code that try to gain privileged access to an operating system and while they seem to be performing a legitimate action they deliver a malicious payload. The payload often contains a backdoor for the attacker that gives him access to the computer or a botnet to send spam or perform Denial-of-service attacks.
 
-Spyware is software created for gathering information without the user's consent. This kind of malware is usually installed without the knowledge of the user or by using deceptive tactics \cite{mal-behavior-analysis}.
+Spyware is software created for gathering information without the user's consent. This kind of malware is usually installed without the knowledge of the user or by using deceptive tactics \cite{mal-behavior-analysis}.	
+
+In \labelindexref{Figure}{img:mal-statistics} we can see the procentage of malware samples that correspond to the each type. These statistics were produced by \textbf{Panda Security} on April 16\ts{th}, 2011.
+
+\fig[scale=0.6]{src/img/mal-statistics.png}{img:mal-statistics}{Malware Statistics}
 
 \section{Avoiding detection}
 \label{sec:avoid-det}
@@ -25,12 +31,12 @@ Polymorphic viruses use a polymorphic engine to change its executable while keep
 
 Metamorphic viruses also use an engine to change their code in a variety of ways, such as code transposition and substituting instruction sequences with equivalent ones. In addition to this, they interweave their code with the original program's code to trick heuristic detection methods. An important difference between a metamorphic engine and a polymorphic one is that the first can rewrite itself while the second cannot \cite{testing-mal-det}.
 
-\section{Malware detection}
-\label{sec:mal-detection}
+\section{Malware detectors}
+\label{sec:mal-detectors}
 
 Malware detectors are developed by performing analysis on samples gathered through various means: honeypots, web crawlers, spam traps and security analysts that collect them from infected computers. Bayer \textit{et al.} \cite{current-mal-behavior} provided insight into common behavior by analyzing almost one million malware samples by monitoring their network activity and tracking data flows.
 
-Bayer \textit{et al.} created a platform, named Anubis, for the dynamic analysis of malware samples which targeted Windows. The behavior of malware samples was monitored for file system, registry, network and botnet activity, GUI windows and sandbox detection. The statistics they presented offer insight into common malware behavior and give a hint to what the main goal of malware detectors should be.
+Bayer \textit{et al.} created a platform, named Anubis \cite{anubis-platform}, for the dynamic analysis of malware samples which targeted Windows operating systems. The behavior of malware samples was monitored for file system, registry, network and botnet activity, GUI windows and sandbox detection. Sandboxes are contained environments used to run and test malicious software. The statistics they presented offer insight into common malware behavior and give a hint to what the main goal of malware detectors should be.
 
 Signature based malware detectors use a list of signatures (signature database) to identify known viruses. The signatures are computed by applying a hash function on the malware file. If a part of a program matches a signature entry from the list, then it is classified as malware. This detection method performes very poorly when confrunted with new samples because the signature is unknown. Also, malware writers can easily avoid detection from this type of detectors by using obfuscation techniques in their programs, like polymorphism or metamorphism \cite{mining-specifications}. 
 
@@ -38,7 +44,7 @@ Over time, the approach in detecting malware has evolved from analyzing the cont
 
 Static analysis of the executable involves scanning the file for particular instruction sequences or different API calls. In order to avoid detection from this type of analysis, attackers attempt to obscure their API-calling behavior or they use a polymorphic engine.
 
-Another method for analysis is to monitor the behavior of the malicious program during runtime in a contained environment, otherwise known as dynamic analysis. This method monitors the malware's interraction with the operating system and the network traffic it produces in order to determine its behavior.
+Another method for analysis is to monitor the behavior of the malicious program during runtime in a sandbox, otherwise known as dynamic analysis. This method monitors the malware's interraction with the operating system and the network traffic it produces in order to determine its behavior.
 
 Semantics-aware malware detectors can overcome the problems posed by obfuscation by using specifications of malicious behavior which are not affected by polymorphic malware. By using a higher-level specification, different versions or implementations of malware which perform the same behavior can be detected. Another advantage of this type of detector is that it can also successfully classify unknown malware \cite{semantics-based-detection}.
 
@@ -47,8 +53,8 @@ Semantics-aware malware detectors can overcome the problems posed by obfuscation
 
 The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec-mining algorithm developed by Christodorescu \textit{et al.} \cite{mining-specifications} provides a method for automating this otherwise time consuming task. 
 
-Their algorithm proposed collecting execution traces from malware and benign programs, constructing the corresponding dependence graphs and then computing the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
+Their malspec-mining algorithm starts by collecting execution traces from malware and benign programs, then it constructs the corresponding dependence graphs and then it computes the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
 
 The malspec-mining algorithm was implemented and tested on a Windows operating system and, although it identified a large number of malware specifications, it managed to capture most of the specifications that were indicated by specialists \cite{mining-specifications}.
 
-In this paper we present an implementation of this algorithm for GNU/Linux based operating systems. In order to capture a program’s behavior we developed a system call interceptor and a network traffic interceptor as Linux kernel modules. Then, a user space program would read the traces from the kernel modules and construct a dependence graph by interpreting the parameter type, direction and value of the recorded system calls. Finally, the malspec-mining algorithm is called, which will generate the malicious behavior specifications.
+In this paper we present an implementation of this algorithm for GNU/Linux based operating systems. In order to capture a program’s behavior we developed a system call interceptor and a network traffic interceptor as Linux kernel modules. Then, a user space program reads the traces from the kernel module and constructs a graph where each node represents a system call and the edges represent parameter dependencies. The edges are determined by interpreting the parameter type, direction and value of the recorded system calls. Finally, the malspec-mining algorithm will generate the malicious behavior specifications.

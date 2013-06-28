@@ -1,3 +1,86 @@
-\chapter{Design}
+\chapter{Malspec Mining Algorithm}
 \label{chapter:third-chapter}
 
+\section{Mining Minimal Contrast Subgraph Patterns}
+\label{third:graph-defs}
+
+The minimal contrast subgraph patterns used in the malspec mining algorithm were introduced by R. Ming Hieng Ting \textit{et al.} \cite{minimal-contrast-subgraph}. The following definitions will provide a better understanding of the malspec mining algorithm.
+
+An \textbf{edge set} is a labelled graph, \textit{i.e.} a graph with labels attached to its vertices and edges, that has no isolated vertices.
+
+Given two graphs, G\tsub{p} and G\tsub{n}, C is a \textbf{common edge set} if and only if C is an edge set and it is a common subgraph. C is a \textbf{maximal common common edge set} if it a is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
+
+The notions of \textbf{maximal common edge set} and \textbf{minimal contrast edge sets} are connected and we can determine the second set by obtaining the complement of the first with respect to the original graph and then computing the minimal transversal.
+
+Given $G_{p}$ and \{$G_{n1}$, $G_{n2}$,...,$G_{nk}$\}, let $M_{i}$ be the set of maximal common edge sets between $G_{p}$ and $G_{ni}$. Then the set of minimal transversals of $\bar{M_{1}} \cup \bar{M_{2}} \cup ... \cup \bar{M_{k}}$ will be the set of all \textbf{minimal contrast edge sets} between $G_{p}$ and \{$G_{n1}$, $G_{n2}$,...,$G_{nk}$\}, where $\bar{M_{i}}$ is the graph complement of $M_{i}$ with respect to $G_{p}$.
+
+For a graph, a \textbf{partition} is a set of disjoint and not empty subsets, named cells, of V, \textit{i.e.} the set of all the vertices in the graph. All the vertices in the same cell have the same label and vertices from different cells are labelled differently. The union of all the cells in the partition is equal to V.
+
+Given $G_{p}$ and $G_{n}$ that are associated with the partitions $T_{p}$ and $T_{n}$, a \textbf{minimal contrast vertex set} is a subset of a cell from $T_{p}$ such that its cardinality is larger by 1 in comparison with the cells from $T_{p}$.
+
+The \textbf{minimal contrast subgraph} of a positive graph, $G_{p}$, with respect to a negative graph, $G_{ni}$, is the minimal union of the \textbf{minimal contrast edge sets} and the \textbf{minimal contrast vertex sets} of the two graphs. The minimal union works like normal union but it removes any graphs that are supergraphs of others in the set.
+
+\section{Maximal Common Edge Set}
+\label{third:maximal-common-edge-set}
+
+In determining the minimal contrast edge set, the most demanding computational task is finding the maximal common edge set. The problem of testing whether a subgraph relationship exists between two graphs is NP-complete.
+
+The maximal common edge set is determined using the backtrack algorithm proposed by J. McGregor for computing the maximal common subgraph \cite{common-subgraph}. 
+
+The algorithm takes as input two graphs, $G_{1}$ and $G_{2}$, with $|V_{1}| < |V_{2}|$, and for each node in the $G_{1}$ it tries to find a correspondent node from $G_{2}$ while maximizing the number of matching edges. The result of the algorithm is a list of pairs of corresponding nodes.
+
+In order to maximize the number of matching edges of the two graphs, a mapping matrix MARCS is used to indicate if an arc from $G_{1}$ can correspond to $G_{2}$. Initially, all the edges from the first graph can correspond to any edge from the second graph. When a node is paired with another, the edges connected to it can only correspond to edges that are connected to the other node. The edges that do not correspond are marked in MARCS with a zero value.
+
+\section{Malspec Mining Algorithm}
+\label{third:malspec-algorithm}	
+
+The malspec-mining algorithm collects the execution traces and uses them to create a dependence graph for each program. The following example shows how an \labelref{execution trace}{lst:syscall-trace} is transformed into a \labelref{dependence graph}{img:syscall-dep-graph}.
+
+\lstset{language=C,caption=System call trace,label=lst:syscall-trace}
+\begin{lstlisting}
+open("/bin/ls",O_RDWR) = 3;
+read(3, 0x80000001, 255) = 127;
+close(3) = 0;
+\end{lstlisting}
+
+\fig[scale=0.8]{src/img/syscall-dep-graph.pdf}{img:syscall-dep-graph}{A system call dependendence graph}
+
+Each node of the dependence graph represents one system call with its arguments, while de edges represent dependences between arguments of different system calls. The dependence graphs are constructed after aggregating similar operations like multiple reads and writes using the same buffer and file handle, thus resulting in fewer nodes.
+
+Edges are established between nodes which present def-use dependencies: if a previous (in execution order) system call parameter has an out (or inout) parameter with the same value as an in (or inout) argument of a later system call then an edge can be established from the first node to the second node.
+
+Then, the minimal contrast subgraph miner operates in three stages. First, the maximal common edge set for the malware graph and all the benign graphs is determined using the algorithm designed by McGregor \cite{common-subgraph}. Next, the common edge sets are unioned together and the minimal traversals of their complements are computed, thus obtaining the minimal contrast edge sets for the malware graph. 
+Finally, the contrasts are minimally unioned with the minimal contrast vertex sets to give the complete set of minimal contrast subgraphs.
+
+The resulting subgraphs for each comparison of the malware sample with a benign program are maximally unioned, \textit{i.e.} removing graphs which are subgraphs of others, giving the desired malicious behavior specifications.
+
+\section{Design}
+\label{third:design}
+
+\project\ takes as input three pathfiles to: 
+\begin{itemize}
+	\item an XML file which contains the system calls, with argument type and direction, that will be considered for the analysis,
+	\item the malware sample that will be analyzed and
+	\item a file which contains a set of benign programs, one per line.
+\end{itemize}
+
+The architecture of \project\ that was used in implementing the algorithm is presented in \labelindexref{Figure}{img:mal-sharp-architecture}.
+
+\fig[scale=0.7]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Architecture}
+
+\subsection{Kernel modules}
+
+The kernel modules can be controlled from user space through different \textbf{ioctl} commands such as: setting the process id and system calls to be monitored, setting the transport protocol and source and destination port to monitor, reading and removing system call log entries and clearing system call
+history.
+
+\subsection{Obtaining traces}
+
+The malspec-mining algorithm is run in user space and it will create a new process for each program that it will analyze. Before running the program it will configure the kernel module to monitor the new process and then they will record its execution trace. Only system calls that have entries in the XML input file will be monitored.
+
+The main program will wait for the child process to finish and then it will start reading the execution trace from the system call interceptor driver.
+
+\subsection{Computing specifications}
+ 
+The malspec-mining algorithm receives the execution trace as input and uses it to create the dependence graph for each program. Because the information gained from monitoring the system calls contains only the register values, the type and direction information for each argument must be filled. This is done by parsing the XML file given as input to \project.
+
+Next, each pair of graphs is run through the different stages of the algorithm. The output consists of a set of malware specifications that are behavior patterns found in the malware sample that did not occur in any of the benign programs. These specifications can later be used for detecting malware.
