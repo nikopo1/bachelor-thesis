@@ -4,9 +4,11 @@
 \project\ was implemented in C++, a natural choice considering we had to comunicate with the Linux kernel modules which are implemented in C. Both the kernel module and the userspace application use the same header file that contains the common data structures.
 
 \section{System Call Interceptor Driver}
-\label{fourth:design}
+\label{fourth:scid}
 
 The System Call Interceptor Driver (SCID) can be configured by giving the pid of the process as an argument at module insertion or by opening the device and calling \code{ioctl}. The system calls to be monitored can only be configured by \code{ioctl}.
+
+The SCID registers itself as a character device named \textbf{scid} using the misc device interface provided by the Linux kernel. It also creates a symlink to procfs that is used by the userspace part of the application for opening the device.
 
 This driver logs only the system call number and the arguments and return values. The system calls are intercepted by replacing the original value of entry in the system call table with the address of an interceptor function which will run the system call and it will perform the necessary logging.
 
@@ -50,8 +52,30 @@ The SCID module \code{ioctl} commands are defined using the macros provided by t
 	\item \code{IOCTL_READ_HISTORY} get and remove the first trace entry
 \end{itemize}
 
+\section{Network Interceptor}
+\label{fourth:ni}
+
+The Network Interceptor (NI) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
+
+NI is controlled through \code{ioctl} calls which receive a \code{intercept_info_t} struct containing the protocol, source and destination ports it should monitor. A zero value destination or source port enables monitoring for all the traffic.
+
+\lstset{language=C,caption=parameter data structures,label=lst:param-struct}
+\begin{lstlisting}
+typedef struct _intercept_info_t {
+	/* IPPROTO_*, TCP, UDP, ICMP */
+	unsigned char xport_protocol;
+	/* used only in TCP and UDP */
+	unsigned short int source;
+	unsigned short int dest;
+} intercept_info_t;
+\end{lstlisting}
+
+Like SCID, the network interceptor also makes a symlink to procfs from which statistics can be read. The information that is collected includes the total number of packages transmitted and the total information size sent for each pair of source and destination ports.
+
+The information gathered by the NI is not used in the determining the malware specifications at the moment, but integration is possible. Currently, the module can be used to verify if a sample malware program tried to use the network to spread itself or to send information.
+
 \section{Reading traces}
-\label{fourth:design}
+\label{fourth:read-traces}
 
 The entries recorded by the SCID module do not contain any type and direction information about the system call. Therefore, in order to successfully identify def-use dependences, the type and direction have to be properly set in a \code{syscall_t} struct, which is defined below, before the graph is constructed.
 
@@ -75,12 +99,14 @@ typedef struct _syscall_t {
 The \code{syscall_t} struct contains a param array with a maximum of 8 argument entries. The first 7 entries are used for the register values of the system call and the 8\ts{th} entry holds the return value.
 Possible argument directions are  in, out and inout, while data types considered are \code{int}, \code{unsigned int}, file descriptor, \code{char*}, \code{void*}, \code{unsigned short} and \code{size_t}.
 
-Each program is run separately by creating a new process, making it yield the processor by waiting on a named semaphore and then replacing its image with \code{execve}. The new process has to be forced to yield the processor in order for the parent process to have sufficient time to set the child’s process pid as the target for the interceptor modules. Otherwise, a partial system call trace would be obtained instead and results would be compromised. 
+\project\ keeps system call decoding information in an XML file which contains for each system call the type and direction information for each register. The file is parsed using the open source library named \textbf{pugixml} \cite{pugixml-library}. We chose this library because it also supports XPath queries, which are used to query information about particular system calls.
+
+Each program is run separately by creating a new process, making it yield the processor by waiting on a named semaphore and then replacing its image with \code{execve}. The new process has to be forced to yield the processor in order for the parent process to have sufficient time to set the child’s process pid as the target for the interceptor modules. Otherwise, a partial system call trace would be obtained instead and the results would be compromised. 
 
 After the parent process has configured the kernel module to monitor its child process, it increments the semaphore to enable it to continue execution. After that, the parent process waits for the child process to end and then it starts reading the execution trace.
 
 \section{Building dependence graphs}
-\label{fourth:design}
+\label{fourth:dep-graphs}
 
 The execution trace inputted is used to create a graph for the sample program. Each node of the graph will contain a \code{syscall_t} struct. On creation, each graph object receives an array of these structs from which to create the graph’s nodes.
 
@@ -92,5 +118,17 @@ Although file descriptors are returned as integer values in Linux, they are trea
 
 Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes.
 
+As pointed out by Christodorescu \textit{et al.} in \cite{mining-specifications}, consecutive system calls of the same type which operate on the same resources can be aggregated into a single node. On a file descriptor, one read of $N$ bytes is equivalent to $N$ consecutive reads of 1 byte.
+
+Aggregation is particulary important because it reduces the number of nodes that have to be paired in the backtracking algorithm designed by McGregor for determining the maximal common edge set.
+
 \section{Malspec algorithm}
-\label{fourth:design}
+\label{fourth:malspec-alg}
+
+McGregor's backtrack algorithm was implemented using a recursive version, although the original pseudocode proposed was iterative.
+
+The algorithm assumed that the graphs are not labelled, but in \cite{minimal-contrast-subgraph} labelling is presented as one of several powerfull prunning methods. Apart from aggregation, label prunning was also used in implementing the backtracking algorithm: only the nodes which shared the same label, the system call number, were tentatively paired.
+
+After the complements of the maximal common edge sets are computed, the minimal transversal of their union must be computed. In our implementation all the edges represent def-use dependencies, so there is no ``weight'' attached to the edge labels. Therefore, the minimal transversal of the graph can be computed by doing a simple breadth first search and keeping a list of the edges that added a new node to the queue.
+
+Testing for subgraph and supergraph relationships between two graphs was performed by finding the maximal common subgraph and then testing if every node of a graph was matched by another node from the second graph.
