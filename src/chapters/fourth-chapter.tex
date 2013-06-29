@@ -6,9 +6,9 @@
 \section{System Call Interceptor Driver}
 \label{fourth:scid}
 
-The System Call Interceptor Driver (SCID) can be configured by giving the pid of the process as an argument at module insertion or by opening the device and calling \code{ioctl}. The system calls to be monitored can only be configured by \code{ioctl}.
+The System Call Interceptor Driver (\abbrev{SCID}{System Call Interceptor Driver}) can be configured by giving the \abbrev{pid}{process id} of the process as an argument at module insertion or by opening the device and calling \code{ioctl}. The system calls to be monitored can only be configured by \code{ioctl}.
 
-The SCID registers itself as a character device named \textbf{scid} using the misc device interface provided by the Linux kernel. It also creates a symlink to procfs that is used by the userspace part of the application for opening the device.
+The SCID registers itself as a character device named \textbf{scid} using the misc device interface provided by the Linux kernel. It also creates a \abbrev{symlink}{symbolic link} to \abbrev{procfs}{proc filesystem} that is used by the userspace part of the application for opening the device.
 
 This driver logs only the system call number and the arguments and return values. The system calls are intercepted by replacing the original value of entry in the system call table with the address of an interceptor function which will run the system call and it will perform the necessary logging.
 
@@ -55,9 +55,9 @@ The SCID module \code{ioctl} commands are defined using the macros provided by t
 \section{Network Interceptor}
 \label{fourth:ni}
 
-The Network Interceptor (NI) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
+The Network Interceptor (\abbrev{NI}{Network Interceptor}) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
 
-NI is controlled through \code{ioctl} calls which receive a \code{intercept_info_t} struct containing the protocol, source and destination ports it should monitor. A zero value destination or source port enables monitoring for all the traffic.
+The NI is controlled through \code{ioctl} calls which receive a \code{intercept_info_t} struct containing the protocol, source and destination ports it should monitor. A zero value destination or source port enables monitoring for all the traffic.
 
 \lstset{language=C,caption=parameter data structures,label=lst:param-struct}
 \begin{lstlisting}
@@ -116,7 +116,9 @@ In addition to system call information, each node contains a unique identificati
 
 Although file descriptors are returned as integer values in Linux, they are treated as different data types because integer values are a common argument type for system calls. 
 
-Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes.
+Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes because the \abbrev{fd}{file descriptor} and the integer have the same value.
+
+Also, due to the fact that Linux reuses file descriptors, an additional check had to be implemented when generating the dependencies. Otherwise, false extra def-use edges would be generated that do not reflect actual argument dependencies.
 
 As pointed out by Christodorescu \textit{et al.} in \cite{mining-specifications}, consecutive system calls of the same type which operate on the same resources can be aggregated into a single node. On a file descriptor, one read of $N$ bytes is equivalent to $N$ consecutive reads of 1 byte.
 

@@ -4,8 +4,56 @@
 \section{Malware test environment}
 \label{fifth:test-env}
 
-\section{Test scenarios}
-\label{fifth:test-scenarios}
+\project\ was tested in a sandbox environment: a VMware virtual machine with a distribution of Ubuntu with the Linux 3.7.8 kernel which has been bridged to the local network for Internet access. To ensure isolation between different malware samples, we used snapshots so that each file was tested on the same virtual machine state.
+
+\section{Test scenario}
+\label{fifth:test-scenario}
+
+In a typical test scenario, \project\ receives an XML file which contains the system calls with parameter information that we want to monitor in our executables. We can test for malware specifications only on a subset of the total system calls a Linux operating system has.
+
+For a better comprehension on how the malspec mining algorithm works, we will consider the following example. Let us assume that we want to search for malware specifications with \code{open}, \code{read}, \code{write} and \code{close} system calls. In this example, \code{program_test} will be the malware sample and \code{diff_test} will be the benign program.
+
+The following table presents the system calls that each executable file makes and the relevant argument information for the dependency edges.
+
+\begin{center}
+\begin{table}[htb]
+  \caption{System calls for program_test and diff_test}
+  \begin{center}
+  \code{
+  \begin{tabular}{cl*{6}l}
+     & program_test & diff_test \\
+    \hline
+    1 & open(...) = fd1 & open(...) = fd1  \\
+    2 & close(fd1) & close(fd1)  \\
+    3 & open(...) = fd2 & open(...) = fd2 \\
+    4 & read(fd2, ...) & read(fd2, ...)  \\
+    5 & close(fd2) & close(fd2) \\
+    6 & open(...) = fd3 & open(...) = fd3\\
+    7 & write(fd3, ...) & close(fd3) \\
+    8 & write(fd3, ...) & open(...) = fd4 \\
+    9 & write(fd3, ...) & write(fd4, ...) \\
+    10 & close(fd3) & read(fd4, ...) \\
+    11 & \multicolumn{1}{c}{-} & close(fd4)
+  \end{tabular}
+  }
+  \end{center}
+  \label{table:test-programs}
+\end{table}
+\end{center}
+
+In \labelindexref{Figure}{img:max-common-edge-set} the generated graphs for the two programs presented in \labelindexref{Table}{table:test-programs} are shown. For each node we have written its index in the graph and its label.
+
+The maximal common edge set that was determined using McGregor's algorithm is shown by drawing paired nodes with the same colors. The nodes that do not have a matching node in the other graph have no color. The edges connecting them are gray because they are not a part of the maximal common edge set.
+
+\fig[scale=0.6]{src/img/max-common-edge-set.pdf}{img:max-common-edge-set}{Maximal common edge set. (a) - program_test; (b) - diff_test.}
+
+After computing the maximal common edge set, its complement in the malware graph is computed. In this particular example, the complement is a single connected graph, so the minimal union step of the algorithm is not required.
+
+Then, a breadth first search is used to find the minimal transversal of the complement. The result of these two steps of the algorithm can be seen in \labelindexref{Figure}{img:min-transversal-compl}. The malspec contains two nodes which are colored red and the black edge connecting them. Because we used a single beign program to find the malspec, this will be the final result of the algorithm.
+
+\fig[scale=0.6]{src/img/min-transversal-compl.pdf}{img:min-transversal-compl}{Minimal transversal of complement on the malware graph. (a) - program_test; (b) - diff_test.}
+
+The complete output from \project\ for \code{program_text} and \code{diff_test} can be seen in \labelindexref{Appendix}{lst:output}
 
 \section{Statistics}
-\label{fifth:test-statistics}
+\label{fifth:test-statistics} 
