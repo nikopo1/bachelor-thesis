@@ -120,14 +120,28 @@ Treating file descriptors the same way as integers would result in false def-use
 
 As pointed out by Christodorescu \textit{et al.} in \cite{mining-specifications}, consecutive system calls of the same type which operate on the same resources can be aggregated into a single node. On a file descriptor, one read of $N$ bytes is equivalent to $N$ consecutive reads of 1 byte.
 
-Aggregation is particulary important because it reduces the number of nodes that have to be paired in the backtracking algorithm designed by McGregor for determining the maximal common edge set.
+Aggregation is particulary important because it reduces the number of nodes that have to be paired in the backtracking algorithm designed by McGregor for determining the maximal common edge set. In \cite{mining-specifications}, two nodes, $n_1$ and $n_2$, were aggregated if:
+
+\begin{itemize}
+	\item $n_1$ and $n_2$ had the same system call
+	\item $n_1$ and $n_2$ shared a common def-use predecessor, $p$
+	\item there was no node between $n_1$ and $n_2$ that performed a different system call.
+\end{itemize}
+
+In addition to these, we added an extra constraint:
+
+\begin{itemize}
+	\item for each in-edge, or out-edge, that connects $n_1$ to another node $n_3$, a corresponding in-edge, or an out-edge, respectively, that connects $n_2$ to $n_3$ must exist.
+\end{itemize}
+
+Although the fourth constraint we added reduces the number of aggregated nodes, it ensures that information related to consecutive nodes that have other def-use dependencies to other resources is not lost.
 
 \section{Malspec algorithm}
 \label{fourth:malspec-alg}
 
-McGregor's backtrack algorithm was implemented using a recursive version, although the original pseudocode proposed was iterative.
+McGregor's backtrack algorithm was implemented using recursion, although the original proposed pseudocode is iterative.
 
-The algorithm assumed that the graphs are not labelled, but in \cite{minimal-contrast-subgraph} labelling is presented as one of several powerfull prunning methods. Apart from aggregation, label prunning was also used in implementing the backtracking algorithm: only the nodes which shared the same label, the system call number, were tentatively paired.
+The initial algorithm assumed that the graphs are not labelled, but in \cite{minimal-contrast-subgraph} labelling is presented as one of several powerfull prunning methods. Apart from aggregation, label prunning was also used in implementing the backtracking algorithm: only the nodes which shared the same label, the system call number, were tentatively paired.
 
 After the complements of the maximal common edge sets are computed, the minimal transversal of their union must be computed. In our implementation all the edges represent def-use dependencies, so there is no ``weight'' attached to the edge labels. Therefore, the minimal transversal of the graph can be computed by doing a simple breadth first search and keeping a list of the edges that added a new node to the queue.
 
