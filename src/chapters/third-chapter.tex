@@ -1,5 +1,5 @@
 \chapter{Malspec Mining Algorithm}
-\label{chapter:third-chapter}
+\label{chapter:third}
 
 \section{Mining Minimal Contrast Subgraph Patterns}
 \label{third:graph-defs}
@@ -34,7 +34,25 @@ In order to maximize the number of matching edges of the two graphs, a mapping m
 \section{Malspec Mining Algorithm}
 \label{third:malspec-algorithm}	
 
-The malspec-mining algorithm collects the execution traces and uses them to create a dependence graph for each program. The following example shows how an \labelref{execution trace}{lst:syscall-trace} is transformed into a \labelref{dependence graph}{img:syscall-dep-graph}.
+The malspec-mining algorithm collects the execution traces and uses them to create a dependence graph for each program.
+
+Each node of the dependence graph represents one system call with its arguments, while de edges represent dependences between arguments of different system calls. The dependence graphs are constructed after aggregating similar operations like multiple reads and writes using the same buffer and file handle, thus resulting in fewer nodes.
+
+Edges are established between nodes which present def-use dependencies: if a previous (in execution order) system call parameter has an out (or inout) parameter with the same value as an in (or inout) argument of a later system call then an edge can be established from the first node to the second node.
+
+Then, the minimal contrast subgraph miner operates in three stages. First, the maximal common edge set for the malware graph and all the benign graphs is determined using the algorithm designed by McGregor \cite{common-subgraph}. 
+
+Next, the common edge sets are unioned together and the minimal traversals of their complements are computed, thus obtaining the minimal contrast edge sets for the malware graph.
+
+Finally, the contrasts are minimally unioned with the minimal contrast vertex sets to give the complete set of minimal contrast subgraphs.
+
+The resulting subgraphs for each comparison of the malware sample with a benign program are maximally unioned, \textit{i.e.} removing graphs which are subgraphs of others, giving the desired malicious behavior specifications.
+
+The following example shows how an \labelref{execution trace}{lst:syscall-trace} is transformed into a \labelref{dependence graph}{img:syscall-dep-graph}. Every system call from \labelindexref{Listing}{lst:syscall-trace} is represented by a node in the dependency graph as seen in \labelindexref{Figure}{img:syscall-dep-graph}. 
+
+Then, each node is compared only with the nodes that succeed it in execution order. In this example, the three system calls are connected two def-use dependency edges because they operate on the same file descriptor.
+
+\newpage
 
 \lstset{language=C,caption=System call trace,label=lst:syscall-trace}
 \begin{lstlisting}
@@ -45,33 +63,31 @@ close(3) = 0;
 
 \fig[scale=0.8]{src/img/syscall-dep-graph.pdf}{img:syscall-dep-graph}{System call dependence graph}
 
-Each node of the dependence graph represents one system call with its arguments, while de edges represent dependences between arguments of different system calls. The dependence graphs are constructed after aggregating similar operations like multiple reads and writes using the same buffer and file handle, thus resulting in fewer nodes.
-
-Edges are established between nodes which present def-use dependencies: if a previous (in execution order) system call parameter has an out (or inout) parameter with the same value as an in (or inout) argument of a later system call then an edge can be established from the first node to the second node.
-
-Then, the minimal contrast subgraph miner operates in three stages. First, the maximal common edge set for the malware graph and all the benign graphs is determined using the algorithm designed by McGregor \cite{common-subgraph}. Next, the common edge sets are unioned together and the minimal traversals of their complements are computed, thus obtaining the minimal contrast edge sets for the malware graph. 
-Finally, the contrasts are minimally unioned with the minimal contrast vertex sets to give the complete set of minimal contrast subgraphs.
-
-The resulting subgraphs for each comparison of the malware sample with a benign program are maximally unioned, \textit{i.e.} removing graphs which are subgraphs of others, giving the desired malicious behavior specifications.
-
 \section{Design}
 \label{third:design}
 
 \project\ takes as input three pathfiles to: 
 \begin{itemize}
-	\item an \abbrev{XML}{Extensible Markup Language} file which contains the system calls, with argument type and direction, that will be considered for the analysis,
+	\item an XML\abbrev{XML}{Extensible Markup Language} file which contains the system calls, with argument type and direction, that will be considered for the analysis,
 	\item the malware sample that will be analyzed and
 	\item a file which contains a set of benign programs, one per line.
 \end{itemize}
 
 The architecture of \project\ that was used in implementing the algorithm is presented in \labelindexref{Figure}{img:mal-sharp-architecture}.
 
-\fig[scale=0.7]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Architecture}
+\fig[scale=0.8]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Architecture}
 
-\subsection{Kernel modules}
+\subsection{System Call Interceptor Driver}
 
-The kernel modules can be controlled from user space through different \textbf{ioctl} commands such as: setting the process id and system calls to be monitored, setting the transport protocol and source and destination port to monitor, reading and removing system call log entries and clearing system call
-history.
+The system call interceptor is a kernel module used for obtaining execution traces for specific processes. It can be controlled from userspace through different \code{ioctl} commands such as: setting the process id to be monitored and setting the system calls to be monitored. Also, each execution trace entry for a system call can be read and removed, the trace history can be cleared and the total number of entries can be read.
+
+This module will be configured to monitor each malicious or benign program from userspace by our application. The resulting execution trace will then be read and used to generate the dependency graph.
+
+\subsection{Network Interceptor}
+
+The network interceptor is a kernel module that was created for monitoring network traffic for specific protocols, such as: TCP, UDP and ICMP. It is also controlled through \code{ioctl} calls and it can be configured to monitor traffic by inspecting source or destination ports for TCP and UDP.
+
+\abbrev{TCP}{Transmission Control Protocol} \abbrev{UDP}{User Datagram Protocol} \abbrev{ICMP}{Internet Control Message Protocol}
 
 \subsection{Obtaining traces}
 

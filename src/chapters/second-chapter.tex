@@ -1,5 +1,5 @@
 \chapter{State of the Art}
-\label{chapter:second-chapter}
+\label{chapter:second}
 
 Computer security mostly refers to the mechanisms that are used to protect computers and networks from different threats. Recent history is full of famous attacks on computers, networks and especially over the Internet. Although this field deals with many more security related issues, one of the major threats to computer security is malware.
 
@@ -14,7 +14,7 @@ Worms are similar to viruses, only that they spread over the network to other ho
 
 Trojan horses, or Trojans, are non-self-replicating code that try to gain privileged access to an operating system and while they seem to be performing a legitimate action they deliver a malicious payload. The payload often contains a backdoor for the attacker that gives him access to the computer or a botnet to send spam or perform Denial-of-service attacks.
 
-A botnet is a network of ``zombie'' computers that have been compromised and are used to perform malicious actions like: distributed denial-of-service attacks (\abbrev{DDoS}{Distributed Denial of Service}). DDoS attacks are carried out in order to stop web services from functioning efficiently or from functioning at all.
+A botnet is a network of ``zombie'' computers that have been compromised and are used to perform malicious actions like: distributed denial-of-service attacks (or DDoS\abbrev{DDoS}{Distributed Denial of Service}). DDoS attacks are carried out in order to stop web services from functioning efficiently or from functioning at all.
 
 Adware, or advertising-supported software, is a term that refers both legitimate advertising software and malware. When used to refer malware, adware presents unwanted advertisments to the user of a computer, sometimes under the form of pop-up windows.
 
@@ -27,7 +27,7 @@ In \labelindexref{Figure}{img:mal-statistics} we can see the procentage of malwa
 \section{Avoiding detection}
 \label{sec:avoid-det}
 
-Malware and antimalware software evolution is tightly coupled: when detection methods become more efficient, malware writters use better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of antimalware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing \abbrev{API}{Application Programming Interface}-calling behavior, polymorphic and metamorphic malware.
+Malware and antimalware software evolution is tightly coupled: when detection methods become more efficient, malware writters use better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of antimalware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing API\abbrev{API}{Application Programming Interface}-calling behavior, polymorphic and metamorphic malware.
 
 Malware writers obscure API-calling behavior by using indirect calls. In this respect, API calls can be achieved by using hard coded addresses but this method is incompatible with different versions of the operating system. Another method commonly employed is to define homonymy functions that first locate the API functions addresses and then use the stored address. Also, arrays can be used to store the API function name and the relocation address \cite{static-detection-behavior}.
 
@@ -42,7 +42,7 @@ Malware detectors are developed by performing analysis on samples gathered throu
 
 Bayer \textit{et al.} created a platform, named Anubis \cite{anubis-platform}, for the dynamic analysis of malware samples which targeted Windows operating systems. The behavior of malware samples was monitored for file system, registry, network and botnet activity, GUI windows and sandbox detection. Sandboxes are contained environments used to run and test malicious software. The statistics they presented offer insight into common malware behavior and give a hint to what the main goal of malware detectors should be.
 
-Signature based malware detectors use a list of signatures (signature database or \abbrev{SB}{signature database}) to identify known viruses. The signatures are computed by applying a hash function on the malware file. If a part of a program matches a signature entry from the list, then it is classified as malware. This detection method performes very poorly when confrunted with new samples because the signature is unknown. Also, malware writers can easily avoid detection from this type of detectors by using obfuscation techniques in their programs, like polymorphism or metamorphism \cite{mining-specifications}. 
+Signature based malware detectors use a list of signatures (signature database or SB\abbrev{SB}{signature database}) to identify known viruses. The signatures are computed by applying a hash function on the malware file. If a part of a program matches a signature entry from the list, then it is classified as malware. This detection method performes very poorly when confrunted with new samples because the signature is unknown. Also, malware writers can easily avoid detection from this type of detectors by using obfuscation techniques in their programs, like polymorphism or metamorphism \cite{mining-specifications}. 
 
 Over time, the approach in detecting malware has evolved from analyzing the contents of infected executable files towards identifying malicious or potentially malicious behavior patterns. These patterns are extracted from the malware sample by static or dynamic analysis.
 
@@ -59,7 +59,7 @@ The problem with behavior-based detection is that the required specifications ha
 
 Their malspec-mining algorithm starts by collecting execution traces from malware and benign programs, then it constructs the corresponding dependence graphs and then it computes the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
 
-The malspec-mining algorithm was implemented and tested on a Windows operating system and, although it identified a large number of malware specifications, it managed to capture most of the specifications that were indicated by specialists \cite{mining-specifications}.
+The malspec-mining algorithm was implemented and tested on a Windows operating system and, although it identified a large number of malware specifications, it also managed to capture most of the specifications that were indicated by specialists \cite{mining-specifications}.
 
 In this paper we present an implementation of this algorithm for GNU/Linux based operating systems. In order to capture a program’s behavior we developed a system call interceptor and a network traffic interceptor as Linux kernel modules.
 

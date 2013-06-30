@@ -1,14 +1,14 @@
 \chapter{Implementation}
-\label{chapter:fourth-chapter}
+\label{chapter:fourth}
 
-\project\ was implemented in C++, a natural choice considering we had to comunicate with the Linux kernel modules which are implemented in C. Both the kernel module and the userspace application use the same header file that contains the common data structures.
+\project\ was implemented in C++, a natural choice considering we had to comunicate with the Linux kernel modules which are implemented in C. Both the kernel modules and the userspace application use the same header file that contains the common data structures required for configurating the modules and reading the execution traces.
 
 \section{System Call Interceptor Driver}
 \label{fourth:scid}
 
-The System Call Interceptor Driver (\abbrev{SCID}{System Call Interceptor Driver}) can be configured by giving the \abbrev{pid}{process id} of the process as an argument at module insertion or by opening the device and calling \code{ioctl}. The system calls to be monitored can only be configured by \code{ioctl}.
+The System Call Interceptor Driver (SCID\abbrev{SCID}{System Call Interceptor Driver}) can be configured by giving the pid\abbrev{pid}{process id} of the process as an argument at module insertion or by opening the device and calling \code{ioctl}. The system calls to be monitored can only be configured by \code{ioctl}.
 
-The SCID registers itself as a character device named \textbf{scid} using the misc device interface provided by the Linux kernel. It also creates a \abbrev{symlink}{symbolic link} to \abbrev{procfs}{proc filesystem} that is used by the userspace part of the application for opening the device.
+The SCID registers itself as a character device named \textbf{scid} using the misc device interface provided by the Linux kernel. It also creates a symlink\abbrev{symlink}{symbolic link} to procfs\abbrev{procfs}{proc filesystem} that is used by the userspace part of the application for opening the device.
 
 This driver logs only the system call number and the arguments and return values. The system calls are intercepted by replacing the original value of entry in the system call table with the address of an interceptor function which will run the system call and it will perform the necessary logging.
 
@@ -55,7 +55,7 @@ The SCID module \code{ioctl} commands are defined using the macros provided by t
 \section{Network Interceptor}
 \label{fourth:ni}
 
-The Network Interceptor (\abbrev{NI}{Network Interceptor}) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
+The Network Interceptor (NI\abbrev{NI}{Network Interceptor}) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
 
 The NI is controlled through \code{ioctl} calls which receive a \code{intercept_info_t} struct containing the protocol, source and destination ports it should monitor. A zero value destination or source port enables monitoring for all the traffic.
 
@@ -99,7 +99,11 @@ typedef struct _syscall_t {
 The \code{syscall_t} struct contains a param array with a maximum of 8 argument entries. The first 7 entries are used for the register values of the system call and the 8\ts{th} entry holds the return value.
 Possible argument directions are  in, out and inout, while data types considered are \code{int}, \code{unsigned int}, file descriptor, \code{char*}, \code{void*}, \code{unsigned short} and \code{size_t}.
 
-\project\ keeps system call decoding information in an XML file which contains for each system call the type and direction information for each register. The file is parsed using the open source library named \textbf{pugixml} \cite{pugixml-library}. We chose this library because it also supports XPath queries, which are used to query information about particular system calls.
+\project\ keeps system call decoding information in an XML file which contains for each system call the type and direction information for each register. The file is parsed using the open source library named \textbf{pugixml} \cite{pugixml-library}. 
+
+We chose this library because the XML configuration files do not contain many entries and \textbf{pugixml} uses DOM representation. Also, it supports XPath queries, which we used to query information about particular system calls when we added type and direction information to the execution trace.
+
+\abbrev{DOM}{Document Object Model}
 
 Each program is run separately by creating a new process, making it yield the processor by waiting on a named semaphore and then replacing its image with \code{execve}. The new process has to be forced to yield the processor in order for the parent process to have sufficient time to set the child’s process pid as the target for the interceptor modules. Otherwise, a partial system call trace would be obtained instead and the results would be compromised. 
 
@@ -116,18 +120,18 @@ In addition to system call information, each node contains a unique identificati
 
 Although file descriptors are returned as integer values in Linux, they are treated as different data types because integer values are a common argument type for system calls. 
 
-Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes because the \abbrev{fd}{file descriptor} and the integer have the same value.
+Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes because the fd\abbrev{fd}{file descriptor} and the integer have the same value.
 
 Also, due to the fact that Linux reuses file descriptors, an additional check had to be implemented when generating the dependencies. Otherwise, false extra def-use edges would be generated that do not reflect actual argument dependencies.
 
 As pointed out by Christodorescu \textit{et al.} in \cite{mining-specifications}, consecutive system calls of the same type which operate on the same resources can be aggregated into a single node. On a file descriptor, one read of $N$ bytes is equivalent to $N$ consecutive reads of 1 byte.
 
-Aggregation is particulary important because it reduces the number of nodes that have to be paired in the backtracking algorithm designed by McGregor for determining the maximal common edge set. In \cite{mining-specifications}, two nodes, $n_1$ and $n_2$, were aggregated if:
+Aggregation is particulary important because it reduces the number of nodes that have to be paired in the backtracking algorithm designed by McGregor for determining the maximal common edge set. According to \cite{mining-specifications}, two nodes, $n_1$ and $n_2$, should be aggregated if:
 
 \begin{itemize}
 	\item $n_1$ and $n_2$ had the same system call
 	\item $n_1$ and $n_2$ shared a common def-use predecessor, $p$
-	\item there was no node between $n_1$ and $n_2$ that performed a different system call.
+	\item there was no node between $n_1$ and $n_2$ that performed a different system call on the same resource.
 \end{itemize}
 
 In addition to these, we added an extra constraint:
@@ -141,7 +145,7 @@ Although the fourth constraint we added reduces the number of aggregated nodes, 
 \section{Malspec algorithm}
 \label{fourth:malspec-alg}
 
-McGregor's backtrack algorithm was implemented using recursion, although the original proposed pseudocode is iterative.
+McGregor's backtrack algorithm was implemented using recursion, although the original proposed pseudocode was iterative.
 
 The initial algorithm assumed that the graphs are not labelled, but in \cite{minimal-contrast-subgraph} labelling is presented as one of several powerfull prunning methods. Apart from aggregation, label prunning was also used in implementing the backtracking algorithm: only the nodes which shared the same label, the system call number, were tentatively paired.
 
