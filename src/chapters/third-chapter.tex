@@ -1,4 +1,4 @@
-\chapter{Malspec Mining Algorithm}
+\chapter{Malspec Mining Algorithm and Design}
 \label{chapter:third}
 
 \section{Mining Minimal Contrast Subgraph Patterns}
@@ -51,8 +51,6 @@ The resulting subgraphs for each comparison of the malware sample with a benign 
 The following example shows how an \labelref{execution trace}{lst:syscall-trace} is transformed into a \labelref{dependence graph}{img:syscall-dep-graph}. Every system call from \labelindexref{Listing}{lst:syscall-trace} is represented by a node in the dependency graph as seen in \labelindexref{Figure}{img:syscall-dep-graph}. 
 
 Then, each node is compared only with the nodes that succeed it in execution order. In this example, the three system calls are connected two def-use dependency edges because they operate on the same file descriptor.
-
-\newpage
 
 \lstset{language=C,caption=System call trace,label=lst:syscall-trace}
 \begin{lstlisting}
