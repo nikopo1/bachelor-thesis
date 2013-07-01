@@ -109,6 +109,6 @@ After the child process ends it will start reading the execution trace from the 
  
 This module contains the implementation of the malware mining algorithm. It uses the graph builder module to generate the dependency graphs for the program samples. The graphs are then used to compute the malware specifications.
 
-First, for each malware and benign program it sends their pathfiles to the graph builder in order to get the graphs. Next, each pair of graphs is run through the different stages of the algorithm. The output consists of a set of malware specifications that are behavior patterns found in the malware sample that did not occur in any of the benign programs. These specifications can later be used for detecting malware.
+First, for each malware and benign program it sends their pathfiles to the graph builder in order to get the dependency graphs. Next, each pair of graphs is run through the different stages of the algorithm. The output consists of a set of malware specifications that are behavior patterns found in the malware sample that did not occur in any of the benign programs. These specifications can later be used for detecting malware.
 
 \fig[scale=0.7]{src/img/mal-sharp-workflow.pdf}{img:mal-sharp-workflow}{Workflow}
