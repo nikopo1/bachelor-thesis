@@ -13,7 +13,11 @@ The system call interface meets this requirement as malware needs to interract w
 
 The project presented in this thesis, named \project, is a Linux tool for automatically searching for malicious program behavior patterns. This tool is a Linux implementation of the malware specification mining algorithm which identifies these behavior patterns by comparing known malware samples to known benign programs. These patterns are a collection of Linux system call parameter dependencies that capture the malicious behavior.
 
+The malware specification mining algorithm takes the system call execution traces for the malicious and benign programs as input and creates a graph for each program. The nodes in the graphs represent system calls and the edges show parameter dependencies between the nodes. The malspec-mining algorithm then the minimal contrast subgraph patterns for each pair of malicious and benign programs are maximally unioned together. The resulting set of graphs is the malware specification.
+
 \project\ is intended to be used by malware specialists to help them analyze new malware samples. It can also be used as part of an automatic detection mechanism which classifies programs based on their behavior by using the malicious behavior specifications.
+
+Our implementation of the malspec-mining algorithm successfully identified malware specifications for the tested malware samples. These malspecs captured behaviour found in the malware samples but not in benign programs.
 
 This thesis organized as follows: in \labelindexref{Chapter}{chapter:second} we describe the main types of malware threats, current detection types, methods that malware uses to avoid detection and a short presentation of the malware specification mining algorithm.
 

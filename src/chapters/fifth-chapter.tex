@@ -1,5 +1,7 @@
-\chapter{Evaluation}
+\chapter{Malsharp Evaluation}
 \label{chapter:fifth}
+
+In this chapter we will present our evaluation for our implementation. We begin by describing the test environment we used for analyzing malware in \labelindexref{section}{fifth:test-env}. Then we describe a typical test scenario and we use a short example to illustrate how the malspec mining algorithm works on a small graph in \labelindexref{section}{fifth:test-scenario}. Finally, we present our evaluation results for a set of malware samples in \labelindexref{section}{fifth:evaluation-results}.
 
 \section{Malware test environment}
 \label{fifth:test-env}
@@ -11,7 +13,6 @@ To ensure that all the malware samples were tested in the same environment, we u
 \fig[scale=1.0]{src/img/test-env.png}{img:test-env}{Virtual Machine test configuration}
 
 In \labelindexref{Figure}{img:test-env} the snapshot test configuration is shown. The ``Clean malware state'' is the malware test snapshot we mentioned earlier. ``Before cutting off for malware test'' is the VM\abbrev{VM}{Virtual Machine} state before changing the connection type from NAT\abbrev{NAT}{Network Address Translation} to bridge and before removing all ssh keys from the machine.
-
 
 \section{Test scenario}
 \label{fifth:test-scenario}
@@ -58,14 +59,14 @@ The maximal common edge set that was determined using McGregor's algorithm is sh
 
 After computing the maximal common edge set, its complement in the malware graph is computed. In this particular example, the complement is a single connected graph, so the minimal union step of the algorithm is not required.
 
-Then, a breadth first search is used to find the minimal transversal of the complement. The result of these two steps of the algorithm can be seen in \labelindexref{Figure}{img:min-transversal-compl}. The malspec contains two nodes which are colored red and the black edge connecting them. Because we used a single beign program to find the malspec, this will be the final result of the algorithm.
+Then, a breadth first search is used to find the minimal transversal of the complement. The result of these two steps of the algorithm can be seen in \labelindexref{Figure}{img:min-transversal-compl}. The malspec contains two nodes which are colored red and the black edge connecting them. Because we used a single benign program to find the malspec, this will be the final result of the algorithm.
 
 \fig[scale=0.65]{src/img/min-transversal-compl.pdf}{img:min-transversal-compl}{Minimal transversal of complement on the malware graph. (a) - program_test; (b) - diff_test.}
 
 The complete output from \project\ for \code{program_text} and \code{diff_test} can be seen in \labelindexref{Appendix}{lst:output}.
 
-\section{Statistics}
-\label{fifth:test-statistics}
+\section{Evaluation results}
+\label{fifth:evaluation-results}
 
 \project\ was tested using the Linux malware samples provided by \cite{open-malware}. All the malware samples that were tested also had additional classification information provided by antivirus software.
 
@@ -77,6 +78,14 @@ The larger set is a superset of the other and has more system calls that use wit
 
 The results for each set of system calls\abbrev{syscall}{system call} can be seen in the following two tables, one per set. The set of benign programs we considered for testing consisted of: \code{ls}, \code{lsmod}, \code{ping} and \code{cat}.
 
+In \labelindexref{Table}{table:mal-analysis-android} and \labelindexref{Table}{table:mal-analysis-all}, we used the following notation:
+
+\begin{itemize}
+    \item N - number of nodes of the dependency graph
+    \item N' - number of nodes left after node aggregation
+    \item E - number of edges of the dependency graph
+\end{itemize}
+
 \begin{center}
 \begin{table}[htb]
   \caption{Malware sample analysis for android.xml}
@@ -87,7 +96,7 @@ The results for each set of system calls\abbrev{syscall}{system call} can be see
     Backdoor.Linux.CGI.a   & 12  & 12  & 5   & 1 & 10.208s & \code{open, read, close} \\
     Backdoor.Linux.Phobi.1 & 36  & 35  & 16  & 1 & 0.0641s & \code{open, read, close} \\
     Trojan.Linux.Rootkit.n & 12  & 11  & 5   & 1 & 0.558s  & \code{open, read, close} \\
-    Virus.Linux.Osf.8759   & 692 & 442 & 285 & 0 & 0.725s  & blocked driver  \\
+    Virus.Linux.Osf.8759   & 692 & 442 & 285 & 0 & 0.725s  & \code{open, read, close}  \\
     Virus.Linux.Radix      & 14  & 13  & 4   & 1 & 0.786s  & \code{open, read} \\
     Virus.Linux.Silvio.b   & 46  & 46  & 24  & 1 & 0.983s  & \code{open, read, close} \\
     Virus.Linux.Snoopy.c   & 128 & 93  & 39  & 1 & 1.271s  & \code{open, read, close} \\
@@ -102,7 +111,7 @@ In \labelindexref{Table}{table:mal-analysis-android}, we show the results for 8 
 
 Most of the samples generated dependency graphs with a very small number of nodes. This is a consequence of the fact that android.xml contains a very small number of system calls used for monitoring: \code{read}, \code{open}, \code{close}, \code{chmod}, \code{lchown} and \code{access}.
 
-\code{Virus.Linux.Osf.8759} generated the biggest graph and we can see that the node aggregation method reduced the total number of nodes considerably, from 692 to 442. Unfortunately, this malware sample interfered with our SCID module, and analysis was not possible.
+\code{Virus.Linux.Osf.8759} generated the biggest graph and we can see that the node aggregation method reduced the total number of nodes considerably, from 692 to 442.
 
 \begin{center}
 \begin{table}[htb]
@@ -125,7 +134,7 @@ Most of the samples generated dependency graphs with a very small number of node
 \end{table}
 \end{center}
 
-Analysis results for the larger set of system calls is shown in \labelindexref{Table}{table:mal-analysis-all}. The total analysis took longer due to the fact that the generated dependence graphs are larger, especially in the case of the benign programs.
+Analysis results for the larger set of system calls is shown in \labelindexref{Table}{table:mal-analysis-all}. The total analysis took longer due to the fact that the generated dependence graphs were larger, especially in the case of the benign programs.
 
 The most remarcable result was for the \code{Virus.Linux.Osf.8759} sample, although it had the longest analysis time - 53 minutes and 31 seconds. The malspec it returned consisted of two graphs.
 

@@ -1,5 +1,7 @@
-\chapter{Malspec Mining Algorithm and Design}
+\chapter{Malspec Mining Algorithm and Malsharp Design}
 \label{chapter:third}
+
+For a better grasp of the malspec mining algorithm and of the different graph algorithms it involves, we will now introduce the necessary definitions and theorems. Then, we will shortly describe the maximal common edge set algorithm which is used in the malspec mining algorithm. Finally we reveal the design aspects of \project\ and the main components.
 
 \section{Mining Minimal Contrast Subgraph Patterns}
 \label{third:graph-defs}
@@ -8,7 +10,7 @@ The minimal contrast subgraph patterns used in the malspec mining algorithm were
 
 An \textbf{edge set} is a labelled graph, \textit{i.e.} a graph with labels attached to its vertices and edges, that has no isolated vertices.
 
-Given two graphs, G\tsub{p} and G\tsub{n}, C is a \textbf{common edge set} if and only if C is an edge set and it is a common subgraph. C is a \textbf{maximal common common edge set} if it a is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
+Given two graphs, G\tsub{p} and G\tsub{n}, C is a \textbf{common edge set} if and only if C is an edge set and it is a common subgraph. C is a \textbf{maximal common common edge set} if it is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
 
 The notions of \textbf{maximal common edge set} and \textbf{minimal contrast edge sets} are connected and we can determine the second set by obtaining the complement of the first with respect to the original graph and then computing the minimal transversal.
 
@@ -34,7 +36,7 @@ In order to maximize the number of matching edges of the two graphs, a mapping m
 \section{Malspec Mining Algorithm}
 \label{third:malspec-algorithm}	
 
-The malspec-mining algorithm collects the execution traces and uses them to create a dependence graph for each program.
+The malspec mining algorithm collects the execution traces and uses them to create a dependence graph for each program.
 
 Each node of the dependence graph represents one system call with its arguments, while de edges represent dependences between arguments of different system calls. The dependence graphs are constructed after aggregating similar operations like multiple reads and writes using the same buffer and file handle, thus resulting in fewer nodes.
 
@@ -61,8 +63,16 @@ close(3) = 0;
 
 \fig[scale=0.8]{src/img/syscall-dep-graph.pdf}{img:syscall-dep-graph}{System call dependence graph}
 
-\section{Design}
+\section{Malsharp Design}
 \label{third:design}
+
+The architecture of \project\ that was used in implementing the algorithm is presented in \labelindexref{Figure}{img:mal-sharp-architecture}. For a better understanding, in \labelindexref{Figure}{img:mal-sharp-workflow} we present a workflow diagram which contains more details.
+
+The malware analysis module of \project\ receives a malware sample and a set of benign programs to analyze. It then sends the pathfiles to the samples to the graph builder module and uses it to get the dependency graphs. In turn, the graph builder module uses the system call interceptor module to collect information about the execution trace.
+
+The network module is currently not integrated with the rest of the architecture, because it is not used in the malspec mining algorithm. Nevertheless, it can be configured to monitor network activity and the information it gathers can be read.
+
+\fig[scale=0.8]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Architecture}
 
 \project\ takes as input three pathfiles to: 
 \begin{itemize}
@@ -71,30 +81,34 @@ close(3) = 0;
 	\item a file which contains a set of benign programs, one per line.
 \end{itemize}
 
-The architecture of \project\ that was used in implementing the algorithm is presented in \labelindexref{Figure}{img:mal-sharp-architecture}.
+\subsection{System Call Interceptor}
 
-\fig[scale=0.8]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Architecture}
+The system call interceptor is a module used for obtaining execution traces for specific processes. It configured by the graph builder module. This module collects information about the what system calls are used by a running process.
 
-\subsection{System Call Interceptor Driver}
+In order to control it, the graph builder module uses commands such as: setting the process identifier to be monitored and setting the system calls to be monitored. Also, each execution trace entry for a system call can be read and removed, the trace history can be cleared and the total number of entries can be read.
 
-The system call interceptor is a kernel module used for obtaining execution traces for specific processes. It can be controlled from userspace through different \code{ioctl} commands such as: setting the process id to be monitored and setting the system calls to be monitored. Also, each execution trace entry for a system call can be read and removed, the trace history can be cleared and the total number of entries can be read.
-
-This module will be configured to monitor each malicious or benign program from userspace by our application. The resulting execution trace will then be read and used to generate the dependency graph.
+This module will be configured to monitor each malicious or benign program from the graph builder module. The resulting execution trace will then be read and used to generate the dependency graph.
 
 \subsection{Network Interceptor}
 
-The network interceptor is a kernel module that was created for monitoring network traffic for specific protocols, such as: TCP, UDP and ICMP. It is also controlled through \code{ioctl} calls and it can be configured to monitor traffic by inspecting source or destination ports for TCP and UDP.
+The network interceptor is a module that was created for monitoring network traffic for specific protocols, such as: TCP, UDP and ICMP. It can controlled in a similar way to the system call interceptor module and it can be configured to monitor traffic by inspecting source or destination ports for TCP and UDP.
+
+The information it gathers is currently not used in the malspec algorithm. Currently, it delivers information such as the total number of packets sent or received and their total size.
 
 \abbrev{TCP}{Transmission Control Protocol} \abbrev{UDP}{User Datagram Protocol} \abbrev{ICMP}{Internet Control Message Protocol}
 
-\subsection{Obtaining traces}
+\subsection{Graph builder}
 
-The malspec-mining algorithm is run in user space and it will create a new process for each program that it will analyze. Before running the program it will configure the kernel module to monitor the new process and then they will record its execution trace. Only system calls that have entries in the XML input file will be monitored.
+The role of the graph builder module it to create dependency graphs based on a set of system calls. These system calls, along with information on how to decode them, are written in a configuration XML file. The graph builder communicates with the system call interceptor module: it configures it and then it reads the system call trace.
 
-The main program will wait for the child process to finish and then it will start reading the execution trace from the system call interceptor driver.
+The graph builder will create a new process for each program that it will analyze. Before running the program it will configure the system call interceptor module to monitor the new process and then will wait for it to finish.Only system calls that have entries in the XML input file will be monitored.
 
-\subsection{Computing specifications}
+After the child process ends it will start reading the execution trace from the system call interceptor driver. Using this trace, it will then construct the dependency graph.
+
+\subsection{Malware analysis}
  
-The malspec-mining algorithm receives the execution trace as input and uses it to create the dependence graph for each program. Because the information gained from monitoring the system calls contains only the register values, the type and direction information for each argument must be filled. This is done by parsing the XML file given as input to \project.
+This module contains the implementation of the malware mining algorithm. It uses the graph builder module to generate the dependency graphs for the program samples. The graphs are then used to compute the malware specifications.
 
-Next, each pair of graphs is run through the different stages of the algorithm. The output consists of a set of malware specifications that are behavior patterns found in the malware sample that did not occur in any of the benign programs. These specifications can later be used for detecting malware.
+First, for each malware and benign program it sends their pathfiles to the graph builder in order to get the graphs. Next, each pair of graphs is run through the different stages of the algorithm. The output consists of a set of malware specifications that are behavior patterns found in the malware sample that did not occur in any of the benign programs. These specifications can later be used for detecting malware.
+
+\fig[scale=0.7]{src/img/mal-sharp-workflow.pdf}{img:mal-sharp-workflow}{Workflow}

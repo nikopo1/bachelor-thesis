@@ -1,4 +1,4 @@
-\chapter{Implementation}
+\chapter{Implementation of Malsharp}
 \label{chapter:fourth}
 
 \project\ was implemented in C++, a natural choice considering we had to comunicate with the Linux kernel modules which are implemented in C. Both the kernel modules and the userspace application use the same header file that contains the common data structures required for configurating the modules and reading the execution traces.
@@ -14,7 +14,7 @@ This driver logs only the system call number and the arguments and return values
 
 System call history is implemented with a queue, which contains the recorded system call values and the actual system call number. When an \code{ioctl} read call is received from userspace, it will remove and return the first entry in the queue. It is also possible to clear the entire log history if needed or to get the total number of entries from the queue.
 
-The kernel module uses the \code{syscall_params} struct to retrieve the parameters from the stack when intercepting system calls. The data structure returned by the kernel is called \code{sctrace_t} and it contains the system call number, a syscall_params struct with the argument values and the return value.The following listing contains the definitions for the data structures used by the kernel module.
+The kernel module uses the \code{syscall_params} struct to retrieve the parameters from the stack when intercepting system calls. The data structure returned by the kernel is called \code{sctrace_t} and it contains the system call number, a syscall_params struct with the argument values and the return value. \labelindexref{Listing}{lst:scid-struct} contains the definitions for the data structures used by the kernel module.
 
 \lstset{language=C,caption=SCID data structures,label=lst:scid-struct}
 \begin{lstlisting}
@@ -79,7 +79,7 @@ The information gathered by the NI is not used in the determining the malware sp
 
 The entries recorded by the SCID module do not contain any type and direction information about the system call. Therefore, in order to successfully identify def-use dependences, the type and direction have to be properly set in a \code{syscall_t} struct, which is defined below, before the graph is constructed.
 
-\lstset{language=C,caption=parameter data structures,label=lst:param-struct}
+\lstset{language=C,caption=Parameter data structures,label=lst:param-struct}
 \begin{lstlisting}
 /* param data structure to describe a syscall's parameters */
 #define MAX_NUM_PARAM	8
@@ -96,8 +96,7 @@ typedef struct _syscall_t {
 } syscall_t;
 \end{lstlisting}
 
-The \code{syscall_t} struct contains a param array with a maximum of 8 argument entries. The first 7 entries are used for the register values of the system call and the 8\ts{th} entry holds the return value.
-Possible argument directions are  in, out and inout, while data types considered are \code{int}, \code{unsigned int}, file descriptor, \code{char*}, \code{void*}, \code{unsigned short} and \code{size_t}.
+The \code{syscall_t} struct contains an array of param structures with a maximum of 8 argument entries. The first 7 entries are used for the register values of the system call and the 8\ts{th} entry holds the return value. Possible argument directions are  in, out and inout, while data types considered are \code{int}, \code{unsigned int}, file descriptor, \code{char*}, \code{void*}, \code{unsigned short} and \code{size_t}.
 
 \project\ keeps system call decoding information in an XML file which contains for each system call the type and direction information for each register. The file is parsed using the open source library named \textbf{pugixml} \cite{pugixml-library}. 
 
