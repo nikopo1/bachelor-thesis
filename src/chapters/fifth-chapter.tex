@@ -96,11 +96,12 @@ In \labelindexref{Table}{table:mal-analysis-android} and \labelindexref{Table}{t
     Backdoor.Linux.CGI.a   & 12  & 12  & 5   & 1 & 10.208s & \code{open, read, close} \\
     Backdoor.Linux.Phobi.1 & 36  & 35  & 16  & 1 & 0.0641s & \code{open, read, close} \\
     Trojan.Linux.Rootkit.n & 12  & 11  & 5   & 1 & 0.558s  & \code{open, read, close} \\
-    Virus.Linux.Osf.8759   & 692 & 442 & 285 & 0 & 0.725s  & \code{open, read, close} \\
+    Virus.Linux.Osf.8759   & 692 & 442 & 285 & 0 & \tl     & \tl \\
     Virus.Linux.Radix      & 14  & 13  & 4   & 1 & 0.786s  & \code{open, read} \\
+    Virus.Linux.Rike.1627  & 47  & 47  & 21  & 1 & 0.674s  & \code{open, read. close} \\
     Virus.Linux.Silvio.b   & 46  & 46  & 24  & 1 & 0.983s  & \code{open, read, close} \\
     Virus.Linux.Snoopy.c   & 128 & 93  & 39  & 1 & 1.271s  & \code{open, read, close} \\
-    Virus.Linux.Svat.b     & 23  & 23  & 12  & 0 & 0.617s  & \multicolumn{1}{c}{-} \\
+    Virus.Linux.Svat.b     & 23  & 23  & 12  & 0 & 0.617s  & \tl \\
   \end{tabular}
   \end{center}
   \label{table:mal-analysis-android}
@@ -109,9 +110,13 @@ In \labelindexref{Table}{table:mal-analysis-android} and \labelindexref{Table}{t
 
 In \labelindexref{Table}{table:mal-analysis-android}, we show the results for 8 malware samples. Although the initial collection of malware samples had 20 samples, some samples could not be tested because the operating system on our VM did not have all the shared libraries it required in order to run. Also, other samples were actually tools for flooding a range of ip addresses in a network.
 
-Most of the samples generated dependency graphs with a very small number of nodes. This is a consequence of the fact that android.xml contains a very small number of system calls used for monitoring: \code{read}, \code{open}, \code{close}, \code{chmod}, \code{lchown} and \code{access}.
+\code{Virus.Linux.Osf.8759} could not be compared to the set of benign programs because it infected the benign programs. Due to the fac that this particular sample inserted itself into the benign programs before we extracted their trace, the analysis was not relevant because the programs already contained malicious behavior. Also, it had a specific feature from the other malware samples, it opened the system call interceptor driver.
 
-\code{Virus.Linux.Osf.8759} generated the biggest graph and we can see that the node aggregation method reduced the total number of nodes considerably, from 692 to 442.
+We compared the system calls that the \code{ls} command, which is part of the benign program set, made before and after the \code{Virus.Linux.Osf.8759} sample was run. Although, in appearance, the behavior of the command was the same, in fact it made additional calls to \code{fork}, \code{socket}, \code{listen}, \code{bind} and \code{pipe}. These system calls were not a part of the initial program trace before the sample was run.
+
+\code{Virus.Linux.Osf.8759} generated the biggest graph and we can see that the node aggregation method reduced the total number of nodes considerably, from 692 to 442. Although analysis was not possible, the node aggregation method is done separately and the results are valid.
+
+Most of the samples generated dependency graphs with a very small number of nodes. This is a consequence of the fact that android.xml contains a very small number of system calls used for monitoring: \code{read}, \code{open}, \code{close}, \code{chmod}, \code{lchown} and \code{access}.
 
 \begin{center}
 \begin{table}[htb]
@@ -123,8 +128,7 @@ Most of the samples generated dependency graphs with a very small number of node
     Backdoor.Linux.CGI.a   & 13  & 13  & 5   & 1 & 0.827s  & \code{open, read, close}  \\
     Backdoor.Linux.Phobi.1 & 36  & 35  & 16  & 1 & 0.641s  & \code{open, read, close}  \\
     Trojan.Linux.Rootkit.n & 14  & 14  & 5   & 1 & 1.044s  & \code{open, read, close}  \\
-    Virus.Linux.Osf.8759   & 19  & 19  & 9   & 0 & 53m 31s & \code{open, read, fstat}  \\
-                           &     &     &     &   &         & \code{read, close; fork}  \\
+    Virus.Linux.Osf.8759   & 19  & 19  & 9   & 0 & \tl     & \tl \\
     Virus.Linux.Radix      & 25  & 22  & 6   & 1 & 0.673s  & \code{open, read, write;} \\ 
                            &     &     &     &   &         & \code{creat, write}       \\
     Virus.Linux.Svat.b     & 25  & 25  & 12  & 0 & 3.495s  & replaces \code{stdio.h}   \\
@@ -136,20 +140,20 @@ Most of the samples generated dependency graphs with a very small number of node
 
 Analysis results for the larger set of system calls is shown in \labelindexref{Table}{table:mal-analysis-all}. The total analysis took longer due to the fact that the generated dependence graphs were larger, especially in the case of the benign programs.
 
-Our implementation succeeded in obtaining malspecs for the analyzed malware samples. The most remarcable result was for the \code{Virus.Linux.Osf.8759} sample, although it had the longest analysis time - 53 minutes and 31 seconds. The malspec it returned consisted of two graphs.
+Our implementation succeeded in obtaining malspecs for the analyzed malware samples. The most remarcable result was for the \code{Virus.Linux.Radix} sample, although it had a shorter analysis time in comparison to ther samples. The malspec it returned consisted of two graphs.
 
-The first graph contains the following nodes: \code{open}, \code{read}, \code{fstat}, \code{read} and \code{close}, all connected by file descriptor dependencies. The second graph contains a single node, a \code{fork} system call. The child process was not monitored.
-
-\code{Virus.Linux.Osf.8759} showed 
+The first graph contains the following nodes: \code{open}, \code{read}, \code{write}. The \code{open} node had descriptor dependencies with the other two calls. The second graph contained two nodes: a \code{creat} system call and a call to \code{write}.
 
 Another interesting malware sample was \code{Virus.Linux.Radix} which inserted itself into the executable file for the \code{ls} command, \code{/bin/ls}, and \code{cp} command, \code{/bin/cp}. It also searched the current directory for executable files and it infected those as well.
 
-Node aggregation reduced the total number of nodes for the dependency graphs, especially in the case of large graphs. In \labelindexref{Figure}{img:node-aggregation-android} we can see the total number of nodes was reduced by a significant factor for \code{Virus.Linux.Osf.8759} and \code{Virus.linux.Snoopy.c}.
+\fig[scale=0.58]{src/img/node-aggregation-android.png}{img:node-aggregation-android}{Node aggregation for android.xml}
 
-\fig[scale=0.6]{src/img/node-aggregation-android.png}{img:node-aggregation-android}{Node aggregation for android.xml}
+Node aggregation reduced the total number of nodes for the dependency graphs, especially in the case of large graphs. In \labelindexref{Figure}{img:node-aggregation-android} we can see the total number of nodes was reduced by a significant factor for \code{Virus.Linux.Osf.8759} and \code{Virus.linux.Snoopy.c}.
 
 In \labelindexref{Figure}{img:mal-analysis-time} we present the analysis duration for the malware samples we considered for the android.xml test.
 
-\makeatletter \setlength{\@fptop}{0pt} \makeatother
+\fig[scale=0.58]{src/img/mal-analysis-time.png}{img:mal-analysis-time}{Analysis time for android.xml samples}
 
-\fig[scale=0.6]{src/img/mal-analysis-time.png}{img:mal-analysis-time}{Analysis time for android.xml samples}
+\labelindexref{Figure}{img:mal-memory-use} shows the memory use of \project\ for the android.xml test. Memory usage was measured by using \textbf{Valgrind} while also checking for potential memory leaks. It can be observed that the memory usage is proportional to the number of nodes of each malware sample. This was the expected result considering that all the malware samples were tested against the same benign programs which had a constant number of system calls.
+
+\fig[scale=0.47]{src/img/mal-memory-use.png}{img:mal-memory-use}{Malsharp memory use for android.xml test}

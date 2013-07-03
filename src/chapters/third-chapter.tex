@@ -6,7 +6,7 @@ For a better grasp of the malspec mining algorithm and of the different graph al
 \section{Mining Minimal Contrast Subgraph Patterns}
 \label{third:graph-defs}
 
-The minimal contrast subgraph patterns used in the malspec mining algorithm were introduced by R. Ming Hieng Ting \textit{et al.} \cite{minimal-contrast-subgraph}. The following definitions will provide a better understanding of the malspec mining algorithm.
+The minimal contrast subgraph patterns used in the malspec mining algorithm were introduced by R. Ming Hieng Ting \textit{et al.}. They defined the following notions in \cite{minimal-contrast-subgraph} and these will provide a better understanding of the malspec mining algorithm.
 
 An \textbf{edge set} is a labelled graph, \textit{i.e.} a graph with labels attached to its vertices and edges, that has no isolated vertices.
 
@@ -27,11 +27,11 @@ The \textbf{minimal contrast subgraph} of a positive graph, $G_{p}$, with respec
 
 In determining the minimal contrast edge set, the most demanding computational task is finding the maximal common edge set. The problem of testing whether a subgraph relationship exists between two graphs is NP-complete.
 
-The maximal common edge set is determined using the backtrack algorithm proposed by J. McGregor for computing the maximal common subgraph \cite{common-subgraph}. 
+The maximal common edge set is determined using the backtrack algorithm proposed by J. McGregor for computing the maximal common subgraph.
 
-The algorithm takes as input two graphs, $G_{1}$ and $G_{2}$, with $|V_{1}| < |V_{2}|$, and for each node in the $G_{1}$ it tries to find a correspondent node from $G_{2}$ while maximizing the number of matching edges. The result of the algorithm is a list of pairs of corresponding nodes.
+The algorithm takes as input two graphs, $G_{1}$ and $G_{2}$, with $|V_{1}| < |V_{2}|$, and for each node in the $G_{1}$ it tries to find a correspondent node from $G_{2}$ while maximizing the number of matching edges. The result of the algorithm is a list of pairs of corresponding nodes \cite{common-subgraph}.
 
-In order to maximize the number of matching edges of the two graphs, a mapping matrix MARCS is used to indicate if an arc from $G_{1}$ can correspond to $G_{2}$. Initially, all the edges from the first graph can correspond to any edge from the second graph. When a node is paired with another, the edges connected to it can only correspond to edges that are connected to the other node. The edges that do not correspond are marked in MARCS with a zero value.
+In order to maximize the number of matching edges of the two graphs, a mapping matrix MARCS is used to indicate if an arc from $G_{1}$ can correspond to $G_{2}$. Initially, all the edges from the first graph can correspond to any edge from the second graph. When a node is paired with another, the edges connected to it can only correspond to edges that are connected to the other node. The edges that do not correspond are marked in MARCS with a zero value \cite{common-subgraph}.
 
 \section{Malspec Mining Algorithm}
 \label{third:malspec-algorithm}	

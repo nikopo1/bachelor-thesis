@@ -5,7 +5,7 @@ Computer security mostly refers to the mechanisms that are used to protect compu
 
 \section{Computer security and threats}
 
-Computer security is information security applied to computers and networks. This field covers the mechanisms by which computers and computer related equipment is protected from different types of threats, such as: attacks from crackers and malicious software. This field also covers protection methods from unplanned events and natural disasters.
+The computer security field covers the mechanisms by which computers and computer related equipment are protected from different types of threats, such as: attacks from crackers and malicious software. This field also covers protection methods from physical damage.
 
 Computer security is generally achieved by limiting resource access to users and programs such that each has only the privileges it needs to function properly.
 
@@ -21,7 +21,7 @@ A \textit{passive} attack acquires information from the system but it does not a
 \section{Malware types}
 \label{sec:mal-types}
 
-Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generically refers to a variety of program forms: viruses, worms, Trojan horses and spyware.
+Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generally refers to a variety of program forms: viruses, worms, Trojan horses and spyware.
 
 A virus is a program that attempts to replicate itself into other executable files by injecting or replacing code. When the infected programs are run, they can infect other ones in turn. They typically target common programs which are found on most machines and executables and copy themselves to key directories.
 
@@ -35,9 +35,9 @@ Rootkits are used by attackers to keep access to a compromised system and are de
 
 A botnet is a network of ``zombie'' computers that have been compromised and are used to perform malicious actions like: Distributed Denial-of-Service attacks (or DDoS\abbrev{DDoS}{Distributed Denial of Service}). DDoS attacks are carried out in order to stop a machine or network resource from functioning efficiently or from functioning at all.
 
-Adware, or advertising-supported software, is a term that refers both legitimate advertising software and malware. When used to refer malware, adware refers to programs that present unwanted advertisments to the user of a computer, sometimes under the form of pop-up windows.
+Adware, or advertising-supported software, is a term that refers both legitimate advertising software and malware. When used to refer malware, adware refers to programs that present unwanted advertisments on infected computers.
 
-Spyware is software created for gathering information without the user's consent. This kind of malware is usually installed without the knowledge of the user or by using deceptive tactics \cite{mal-behavior-analysis}.
+Spyware is software created for gathering information without the user's consent. This kind of malware is usually installed without the knowledge of the user or by tricking the user into installing an application or add-ons to existing applications \cite{mal-behavior-analysis}.
 
 \fig[scale=0.6]{src/img/malware-types.pdf}{img:malware-types}{Malware Types}
 
@@ -83,7 +83,7 @@ Semantics-aware malware detectors can overcome the problems posed by obfuscation
 \section{Malspec Mining Algorithm}
 \label{sec:malspec-alg}
 
-The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec mining algorithm developed by Christodorescu \textit{et al.} \cite{mining-specifications} provides a method for automating this otherwise time consuming task. \abbrev{malspec}{malware specification}
+The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec mining algorithm developed by Christodorescu \textit{et al.} in \cite{mining-specifications} provides a method for automating this otherwise time consuming task. \abbrev{malspec}{malware specification}
 
 Their malspec mining algorithm starts by collecting execution traces from malware and benign programs, then it constructs the corresponding dependence graphs and then it computes the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
 
