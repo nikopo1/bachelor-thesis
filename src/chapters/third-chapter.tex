@@ -66,13 +66,13 @@ close(3) = 0;
 \section{Malsharp Design}
 \label{third:design}
 
-The architecture of \project\ that was used in implementing the algorithm is presented in \labelindexref{Figure}{img:mal-sharp-architecture}. For a better understanding, in \labelindexref{Figure}{img:mal-sharp-workflow} we present a workflow diagram which contains more details.
+The architecture of \project\ that was used in implementing the algorithm is presented in \labelindexref{Figure}{img:mal-sharp-architecture}. Also, in \labelindexref{Figure}{img:mal-sharp-workflow} we present a workflow diagram.
 
-The malware analysis module of \project\ receives a malware sample and a set of benign programs to analyze. It then sends the pathfiles to the samples to the graph builder module and uses it to get the dependency graphs. In turn, the graph builder module uses the system call interceptor module to collect information about the execution trace.
+The malware analysis module of \project\ receives a malware sample and a set of benign programs to analyze. It then sends the pathfiles of the samples to the graph builder module and uses it to get the dependency graphs. In turn, the graph builder module uses the system call interceptor module to collect information about the execution trace.
 
-The network module is currently not integrated with the rest of the architecture, because it is not used in the malspec mining algorithm. Nevertheless, it can be configured to monitor network activity and the information it gathers can be read.
+The network module can be used for a better understanding of malware behavior. It can be configured to monitor network activity and the information it gathers can be read.
 
-\fig[scale=0.8]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Architecture}
+\fig[scale=0.8]{src/img/mal-sharp-architecture.pdf}{img:mal-sharp-architecture}{Malsharp Architecture}
 
 \project\ takes as input three pathfiles to: 
 \begin{itemize}
@@ -83,7 +83,7 @@ The network module is currently not integrated with the rest of the architecture
 
 \subsection{System Call Interceptor}
 
-The system call interceptor is a module used for obtaining execution traces for specific processes. It configured by the graph builder module. This module collects information about the what system calls are used by a running process.
+The system call interceptor is a module used for obtaining execution traces for specific processes. The module is configured by the graph builder and it collects information about the system calls that are used by a running process.
 
 In order to control it, the graph builder module uses commands such as: setting the process identifier to be monitored and setting the system calls to be monitored. Also, each execution trace entry for a system call can be read and removed, the trace history can be cleared and the total number of entries can be read.
 
@@ -93,7 +93,7 @@ This module will be configured to monitor each malicious or benign program from 
 
 The network interceptor is a module that was created for monitoring network traffic for specific protocols, such as: TCP, UDP and ICMP. It can controlled in a similar way to the system call interceptor module and it can be configured to monitor traffic by inspecting source or destination ports for TCP and UDP.
 
-The information it gathers is currently not used in the malspec algorithm. Currently, it delivers information such as the total number of packets sent or received and their total size.
+The information it gathers is currently not used in the malspec algorithm. Currently, it collects information such as the total number of packets sent or received and their total size.
 
 \abbrev{TCP}{Transmission Control Protocol} \abbrev{UDP}{User Datagram Protocol} \abbrev{ICMP}{Internet Control Message Protocol}
 

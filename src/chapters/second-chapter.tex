@@ -5,7 +5,18 @@ Computer security mostly refers to the mechanisms that are used to protect compu
 
 \section{Computer security and threats}
 
+Computer security is information security applied to computers and networks. This field covers the mechanisms by which computers and computer related equipment is protected from different types of threats, such as: attacks from crackers and malicious software. This field also covers protection methods from unplanned events and natural disasters.
 
+Computer security is generally achieved by limiting resource access to users and programs such that each has only the privileges it needs to function properly.
+
+Given the fact that the Internet was not initially designed with the intent of ensuring a secure channel of communication, most computer security issues are network related. Although security mechanisms have been implemented over the Internet, some are still vulerable to attacks.
+
+In computer security, a threat refers to an action that has the potential to harm an information system by obtaining unauthorized access to the system, modifying data, revealing sensitive information or by performing a Denial-of-Service attack.
+
+The basis of Information Security is the CIA triad: Confidentiality, Integrity and Availability.
+
+Attacks are classified into active or passive attacks. An attack is considered \textit{active} when it attempts to alter system resources or affect their operation, therefore compromising the system's Integrity and Availability.
+A \textit{passive} attack acquires information from the system but it does not affect its resources or operation, therefore compromising Confidentiality \cite{rfc2828}.
 
 \section{Malware types}
 \label{sec:mal-types}
@@ -28,20 +39,21 @@ Adware, or advertising-supported software, is a term that refers both legitimate
 
 Spyware is software created for gathering information without the user's consent. This kind of malware is usually installed without the knowledge of the user or by using deceptive tactics \cite{mal-behavior-analysis}.
 
-\labelindexref{Figure}{img:malware-types} shows a classification of malware types based on means of distribution and their dependency on host programs to propagate themselves.
-
 \fig[scale=0.6]{src/img/malware-types.pdf}{img:malware-types}{Malware Types}
 
-In \labelindexref{Figure}{img:mal-statistics-type} we can see malware distribution by type. \labelindexref{Figure}{img:mal-statistics-infected} shows the procentage of malware infections by type. These statistics were produced by \textbf{Panda Security} for the 1\ts{st} quarter of 2013. 
+\labelindexref{Figure}{img:malware-types} shows a classification of malware types based on means of distribution and their dependency on host programs to propagate themselves.
 
 \fig[scale=0.6]{src/img/mal-statistics-type.png}{img:mal-statistics-type}{Malware distribution by type}
 
+In \labelindexref{Figure}{img:mal-statistics-type} we can see malware distribution by type. These statistics were produced by \textbf{Panda Security} for the 1\ts{st} quarter of 2013. 
+
+%\labelindexref{Figure}{img:mal-statistics-infected} shows the procentage of malware infections by type. 
 %\fig[scale=0.6]{src/img/mal-statistics-infected.png}{img:mal-statistics-infected}{Malware infections by type}
 
 \section{Avoiding detection}
 \label{sec:avoid-det}
 
-Malware and antimalware software evolution is tightly coupled: when detection methods become more efficient, malware writters use better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of anti-malware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing API\abbrev{API}{Application Programming Interface}-calling behavior, polymorphic and metamorphic malware.
+Malware and anti-malware software evolution is tightly coupled: when detection methods become more efficient, malware writters use better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of anti-malware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing API\abbrev{API}{Application Programming Interface}-calling behavior, polymorphic and metamorphic malware.
 
 Malware writers obscure API-calling behavior by using indirect calls. In this respect, API calls can be achieved by using hard coded addresses but this method is incompatible with different versions of the operating system. Another method commonly employed is to define homonymy functions that first locate the API functions addresses and then use the stored address. Also, arrays can be used to store the API function name and the relocation address \cite{static-detection-behavior}.
 
@@ -63,6 +75,8 @@ Over time, the approach in detecting malware has evolved from analyzing the cont
 Static analysis of the executable involves scanning the file for particular instruction sequences or different API calls. In order to avoid detection from this type of analysis, attackers attempt to obscure their API-calling behavior or they use a polymorphic engine.
 
 Another method for analysis is to monitor the behavior of the malicious program during runtime in a sandbox, otherwise known as dynamic analysis. This method monitors the malware's interraction with the operating system and the network traffic it produces in order to determine its behavior.
+
+As pointed out in \cite{smartphone-malware-detection}, where a taxonomy of malware detectors for smartphones is presented, the signatures used by signature based detectors can be a simple hash/byte signature or a behavior signature. Behavior signatures can be generated from static analysis, containing information such as code syntax and structure, and from dynamic analysis, which consist of malicious behavior patterns that appear on runtime.
 
 Semantics-aware malware detectors can overcome the problems posed by obfuscation by using specifications of malicious behavior which are not affected by polymorphic malware. By using a higher-level specification, different versions or implementations of malware which perform the same behavior can be detected. Another advantage of this type of detector is that it can also successfully classify unknown malware \cite{semantics-based-detection}.
 

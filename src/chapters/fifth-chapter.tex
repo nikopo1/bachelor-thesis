@@ -1,7 +1,7 @@
 \chapter{Malsharp Evaluation}
 \label{chapter:fifth}
 
-In this chapter we will present our evaluation for our implementation. We begin by describing the test environment we used for analyzing malware in \labelindexref{section}{fifth:test-env}. Then we describe a typical test scenario and we use a short example to illustrate how the malspec mining algorithm works on a small graph in \labelindexref{section}{fifth:test-scenario}. Finally, we present our evaluation results for a set of malware samples in \labelindexref{section}{fifth:evaluation-results}.
+In this chapter we will present our evaluation for \project. We begin by describing the test environment we used for analyzing malware in \labelindexref{section}{fifth:test-env}. Then we describe a typical test scenario and we use a short example to illustrate how the malspec mining algorithm works on a small graph in \labelindexref{section}{fifth:test-scenario}. Finally, we present our evaluation results for a set of malware samples in \labelindexref{section}{fifth:evaluation-results}.
 
 \section{Malware test environment}
 \label{fifth:test-env}
@@ -49,11 +49,11 @@ The following table presents the system calls that each executable file makes an
 \end{table}
 \end{center}
 
+\fig[scale=0.65]{src/img/max-common-edge-set.pdf}{img:max-common-edge-set}{Maximal common edge set. (a) program_test; (b) diff_test.}
+
 In \labelindexref{Figure}{img:max-common-edge-set} the generated graphs for the two programs presented in \labelindexref{Table}{table:test-programs} are shown. For each node we have written its index in the graph and its label.
 
 Although there are three \code{write} calls in \code{program_test} that operate on the same file descriptor, these nodes are not aggregated because of the fourth restriction we added to node aggregation in \labelindexref{Section}{fourth:dep-graphs}. The three nodes cannot be aggregated because of the edges that exist between them.
-
-\fig[scale=0.65]{src/img/max-common-edge-set.pdf}{img:max-common-edge-set}{Maximal common edge set. (a) - program_test; (b) - diff_test.}
 
 The maximal common edge set that was determined using McGregor's algorithm is shown by drawing paired nodes with the same colors. The nodes that do not have a matching node in the other graph have no color. The edges connecting them are gray because they are not a part of the maximal common edge set.
 
@@ -61,7 +61,7 @@ After computing the maximal common edge set, its complement in the malware graph
 
 Then, a breadth first search is used to find the minimal transversal of the complement. The result of these two steps of the algorithm can be seen in \labelindexref{Figure}{img:min-transversal-compl}. The malspec contains two nodes which are colored red and the black edge connecting them. Because we used a single benign program to find the malspec, this will be the final result of the algorithm.
 
-\fig[scale=0.65]{src/img/min-transversal-compl.pdf}{img:min-transversal-compl}{Minimal transversal of complement on the malware graph. (a) - program_test; (b) - diff_test.}
+\fig[scale=0.65]{src/img/min-transversal-compl.pdf}{img:min-transversal-compl}{Minimal transversal of complement graph. (a) program_test; (b) diff_test.}
 
 The complete output from \project\ for \code{program_text} and \code{diff_test} can be seen in \labelindexref{Appendix}{lst:output}.
 
@@ -96,7 +96,7 @@ In \labelindexref{Table}{table:mal-analysis-android} and \labelindexref{Table}{t
     Backdoor.Linux.CGI.a   & 12  & 12  & 5   & 1 & 10.208s & \code{open, read, close} \\
     Backdoor.Linux.Phobi.1 & 36  & 35  & 16  & 1 & 0.0641s & \code{open, read, close} \\
     Trojan.Linux.Rootkit.n & 12  & 11  & 5   & 1 & 0.558s  & \code{open, read, close} \\
-    Virus.Linux.Osf.8759   & 692 & 442 & 285 & 0 & 0.725s  & \code{open, read, close}  \\
+    Virus.Linux.Osf.8759   & 692 & 442 & 285 & 0 & 0.725s  & \code{open, read, close} \\
     Virus.Linux.Radix      & 14  & 13  & 4   & 1 & 0.786s  & \code{open, read} \\
     Virus.Linux.Silvio.b   & 46  & 46  & 24  & 1 & 0.983s  & \code{open, read, close} \\
     Virus.Linux.Snoopy.c   & 128 & 93  & 39  & 1 & 1.271s  & \code{open, read, close} \\
@@ -136,9 +136,20 @@ Most of the samples generated dependency graphs with a very small number of node
 
 Analysis results for the larger set of system calls is shown in \labelindexref{Table}{table:mal-analysis-all}. The total analysis took longer due to the fact that the generated dependence graphs were larger, especially in the case of the benign programs.
 
-The most remarcable result was for the \code{Virus.Linux.Osf.8759} sample, although it had the longest analysis time - 53 minutes and 31 seconds. The malspec it returned consisted of two graphs.
+Our implementation succeeded in obtaining malspecs for the analyzed malware samples. The most remarcable result was for the \code{Virus.Linux.Osf.8759} sample, although it had the longest analysis time - 53 minutes and 31 seconds. The malspec it returned consisted of two graphs.
 
 The first graph contains the following nodes: \code{open}, \code{read}, \code{fstat}, \code{read} and \code{close}, all connected by file descriptor dependencies. The second graph contains a single node, a \code{fork} system call. The child process was not monitored.
 
+\code{Virus.Linux.Osf.8759} showed 
+
 Another interesting malware sample was \code{Virus.Linux.Radix} which inserted itself into the executable file for the \code{ls} command, \code{/bin/ls}, and \code{cp} command, \code{/bin/cp}. It also searched the current directory for executable files and it infected those as well.
 
+Node aggregation reduced the total number of nodes for the dependency graphs, especially in the case of large graphs. In \labelindexref{Figure}{img:node-aggregation-android} we can see the total number of nodes was reduced by a significant factor for \code{Virus.Linux.Osf.8759} and \code{Virus.linux.Snoopy.c}.
+
+\fig[scale=0.6]{src/img/node-aggregation-android.png}{img:node-aggregation-android}{Node aggregation for android.xml}
+
+In \labelindexref{Figure}{img:mal-analysis-time} we present the analysis duration for the malware samples we considered for the android.xml test.
+
+\makeatletter \setlength{\@fptop}{0pt} \makeatother
+
+\fig[scale=0.6]{src/img/mal-analysis-time.png}{img:mal-analysis-time}{Analysis time for android.xml samples}
