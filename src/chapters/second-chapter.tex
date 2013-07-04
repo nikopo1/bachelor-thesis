@@ -15,15 +15,15 @@ In computer security, a threat refers to an action that has the potential to har
 
 The basis of Information Security is the CIA triad: Confidentiality, Integrity and Availability.
 
-Attacks are classified into active or passive attacks. An attack is considered \textit{active} when it attempts to alter system resources or affect their operation, therefore compromising the system's Integrity and Availability.
+Attacks are classified into active or passive attacks. An attack is considered \textit{active} when it attempts to alter system resources or to affect their operation, therefore compromising the system's Integrity and Availability.
 A \textit{passive} attack acquires information from the system but it does not affect its resources or operation, therefore compromising Confidentiality \cite{rfc2828}.
 
 \section{Malware types}
 \label{sec:mal-types}
 
-Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generally refers to a variety of program forms: viruses, worms, Trojan horses and spyware.
+Malware, or malicious software, is software programmed and used by attackers in order to gain access to private computers, to obtain sensitive information or to simply disrupt normal computer operation. Malware generally refers to a variety of program forms: viruses, worms, Trojan horses, Backdoors, rootkits, botnets, adware and spyware.
 
-A virus is a program that attempts to replicate itself into other executable files by injecting or replacing code. When the infected programs are run, they can infect other ones in turn. They typically target common programs which are found on most machines and executables and copy themselves to key directories.
+A virus is a program that attempts to replicate itself into other executable files by injecting or replacing code. When the infected programs are run, they can infect other ones in turn. They typically target executables and common programs which are found on most machines and copy themselves to key directories.
 
 Worms are similar to viruses, only that they spread over the network to other hosts which have the same vulnerability as the initial host. This is done by performing network port scans, DNS queries and then trying to infect other machines. Also, this type of malware usually downloads a second program from a remote server.
 
@@ -31,9 +31,9 @@ Trojan horses, or Trojans, are non-self-replicating code that try to gain privil
 
 Backdoors are an alternative method of authentification to a system which bypasses normal authentification and secures illegal remote acces. This type of malicious software is installed by attackers after they have compromised a system through an alternative method.
 
-Rootkits are used by attackers to keep access to a compromised system and are designed to hide files and the existence of processes and network connections from detection methods. Rootkit instalation can done automatically or an attacker can install it after he has gained root or administrator access to the system.
+Rootkits are used by attackers to keep access to a compromised system and are designed to hide files and the existence of processes and network connections from detection methods. Rootkit instalation can be done automatically or an attacker can install it after he has gained root or administrator access to the system.
 
-A botnet is a network of ``zombie'' computers that have been compromised and are used to perform malicious actions like: Distributed Denial-of-Service attacks (or DDoS\abbrev{DDoS}{Distributed Denial of Service}). DDoS attacks are carried out in order to stop a machine or network resource from functioning efficiently or from functioning at all.
+A botnet is a network of ``zombie'' computers that have been compromised and that are used to perform malicious actions like Distributed Denial-of-Service attacks (or DDoS\abbrev{DDoS}{Distributed Denial of Service}). DDoS attacks are carried out in order to stop a machine or a network resource from functioning efficiently or from functioning at all.
 
 Adware, or advertising-supported software, is a term that refers both legitimate advertising software and malware. When used to refer malware, adware refers to programs that present unwanted advertisments on infected computers.
 
@@ -53,7 +53,7 @@ In \labelindexref{Figure}{img:mal-statistics-type} we can see malware distributi
 \section{Avoiding detection}
 \label{sec:avoid-det}
 
-Malware and anti-malware software evolution is tightly coupled: when detection methods become more efficient, malware writters use better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of anti-malware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing API\abbrev{API}{Application Programming Interface}-calling behavior, polymorphic and metamorphic malware.
+Malware and anti-malware software evolution is tightly coupled: when detection methods become more efficient, malware writters start using better hiding techniques. In response, anti-malware developers use better algorithms. In the course of time, the development of anti-malware software has led attackers to start using different obfuscation methods to avoid detection, such as: concealing API\abbrev{API}{Application Programming Interface}-calling behavior, polymorphic and metamorphic malware.
 
 Malware writers obscure API-calling behavior by using indirect calls. In this respect, API calls can be achieved by using hard coded addresses but this method is incompatible with different versions of the operating system. Another method commonly employed is to define homonymy functions that first locate the API functions addresses and then use the stored address. Also, arrays can be used to store the API function name and the relocation address \cite{static-detection-behavior}.
 
@@ -85,7 +85,7 @@ Semantics-aware malware detectors can overcome the problems posed by obfuscation
 
 The problem with behavior-based detection is that the required specifications have to be manually identified by a malware specialist. The malspec mining algorithm developed by Christodorescu \textit{et al.} in \cite{mining-specifications} provides a method for automating this otherwise time consuming task. \abbrev{malspec}{malware specification}
 
-Their malspec mining algorithm starts by collecting execution traces from malware and benign programs, then it constructs the corresponding dependence graphs and then it computes the specification of malicious behavior as difference of dependence graphs as minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
+Their malspec mining algorithm starts by collecting execution traces from malware and benign programs, then it constructs the corresponding dependency graphs and then it computes the specification of malicious behavior as difference of dependency graphs in the form of minimal contrast subgraph patterns \cite{minimal-contrast-subgraph}.
 
 The malspec mining algorithm was implemented and tested on a Windows operating system and, although it identified a large number of malware specifications, it also managed to capture most of the specifications that were indicated by specialists \cite{mining-specifications}.
 

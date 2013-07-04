@@ -1,4 +1,4 @@
-\chapter{Malspec Mining Algorithm and Malsharp Design}
+\chapter{Malspec Mining Algorithm, Malsharp Design}
 \label{chapter:third}
 
 For a better grasp of the malspec mining algorithm and of the different graph algorithms it involves, we will now introduce the necessary definitions and theorems. Then, we will shortly describe the maximal common edge set algorithm which is used in the malspec mining algorithm. Finally we reveal the design aspects of \project\ and the main components.
@@ -10,7 +10,7 @@ The minimal contrast subgraph patterns used in the malspec mining algorithm were
 
 An \textbf{edge set} is a labelled graph, \textit{i.e.} a graph with labels attached to its vertices and edges, that has no isolated vertices.
 
-Given two graphs, G\tsub{p} and G\tsub{n}, C is a \textbf{common edge set} if and only if C is an edge set and it is a common subgraph. C is a \textbf{maximal common common edge set} if it is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
+Given two graphs, $G_{p}$ and $G_{n}$, $C$ is a \textbf{common edge set} if and only if $C$ is an edge set and it is a common subgraph. $C$ is a \textbf{maximal common common edge set} if it is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
 
 The notions of \textbf{maximal common edge set} and \textbf{minimal contrast edge sets} are connected and we can determine the second set by obtaining the complement of the first with respect to the original graph and then computing the minimal transversal.
 
@@ -29,16 +29,16 @@ In determining the minimal contrast edge set, the most demanding computational t
 
 The maximal common edge set is determined using the backtrack algorithm proposed by J. McGregor for computing the maximal common subgraph.
 
-The algorithm takes as input two graphs, $G_{1}$ and $G_{2}$, with $|V_{1}| < |V_{2}|$, and for each node in the $G_{1}$ it tries to find a correspondent node from $G_{2}$ while maximizing the number of matching edges. The result of the algorithm is a list of pairs of corresponding nodes \cite{common-subgraph}.
+The algorithm takes as input two graphs, $G_{1}$ and $G_{2}$, with $|V_{1}| < |V_{2}|$, and for each node in $G_{1}$ it tries to find a correspondent node from $G_{2}$ while maximizing the number of matching edges. The result of the algorithm is a list of pairs of corresponding nodes \cite{common-subgraph}.
 
 In order to maximize the number of matching edges of the two graphs, a mapping matrix MARCS is used to indicate if an arc from $G_{1}$ can correspond to $G_{2}$. Initially, all the edges from the first graph can correspond to any edge from the second graph. When a node is paired with another, the edges connected to it can only correspond to edges that are connected to the other node. The edges that do not correspond are marked in MARCS with a zero value \cite{common-subgraph}.
 
 \section{Malspec Mining Algorithm}
 \label{third:malspec-algorithm}	
 
-The malspec mining algorithm collects the execution traces and uses them to create a dependence graph for each program.
+The malspec mining algorithm collects the execution traces and uses them to create a dependency graph for each program.
 
-Each node of the dependence graph represents one system call with its arguments, while de edges represent dependences between arguments of different system calls. The dependence graphs are constructed after aggregating similar operations like multiple reads and writes using the same buffer and file handle, thus resulting in fewer nodes.
+Each node of the dependency graph represents one system call with its arguments, while the edges represent dependencies between arguments of different system calls. The dependency graphs are constructed after aggregating similar operations like multiple reads and writes using the same buffer and file descriptor, thus resulting in fewer nodes.
 
 Edges are established between nodes which present def-use dependencies: if a previous (in execution order) system call parameter has an out (or inout) parameter with the same value as an in (or inout) argument of a later system call then an edge can be established from the first node to the second node.
 
@@ -50,9 +50,9 @@ Finally, the contrasts are minimally unioned with the minimal contrast vertex se
 
 The resulting subgraphs for each comparison of the malware sample with a benign program are maximally unioned, \textit{i.e.} removing graphs which are subgraphs of others, giving the desired malicious behavior specifications.
 
-The following example shows how an \labelref{execution trace}{lst:syscall-trace} is transformed into a \labelref{dependence graph}{img:syscall-dep-graph}. Every system call from \labelindexref{Listing}{lst:syscall-trace} is represented by a node in the dependency graph as seen in \labelindexref{Figure}{img:syscall-dep-graph}. 
+The following example shows how an \labelref{execution trace}{lst:syscall-trace} is transformed into a \labelref{dependency graph}{img:syscall-dep-graph}. Every system call from \labelindexref{Listing}{lst:syscall-trace} is represented by a node in the dependency graph as seen in \labelindexref{Figure}{img:syscall-dep-graph}. 
 
-Then, each node is compared only with the nodes that succeed it in execution order. In this example, the three system calls are connected two def-use dependency edges because they operate on the same file descriptor.
+Then, each node is compared only with the nodes that succeed it in execution order. In this example, the three system calls are connected by two def-use dependency edges because they operate on the same file descriptor.
 
 \lstset{language=C,caption=System call trace,label=lst:syscall-trace}
 \begin{lstlisting}
@@ -61,7 +61,7 @@ read(3, 0x80000001, 255) = 127;
 close(3) = 0;
 \end{lstlisting}
 
-\fig[scale=0.8]{src/img/syscall-dep-graph.pdf}{img:syscall-dep-graph}{System call dependence graph}
+\fig[scale=0.8]{src/img/syscall-dep-graph.pdf}{img:syscall-dep-graph}{System call dependency graph}
 
 \section{Malsharp Design}
 \label{third:design}
@@ -101,7 +101,7 @@ The information it gathers is currently not used in the malspec algorithm. Curre
 
 The role of the graph builder module it to create dependency graphs based on a set of system calls. These system calls, along with information on how to decode them, are written in a configuration XML file. The graph builder communicates with the system call interceptor module: it configures it and then it reads the system call trace.
 
-The graph builder will create a new process for each program that it will analyze. Before running the program it will configure the system call interceptor module to monitor the new process and then will wait for it to finish.Only system calls that have entries in the XML input file will be monitored.
+The graph builder will create a new process for each program that it will analyze. Before running the program it will configure the system call interceptor module to monitor the new process and then will wait for it to finish. Only system calls that have entries in the XML input file will be monitored.
 
 After the child process ends it will start reading the execution trace from the system call interceptor driver. Using this trace, it will then construct the dependency graph.
 

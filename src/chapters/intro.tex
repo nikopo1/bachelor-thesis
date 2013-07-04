@@ -1,7 +1,7 @@
 \chapter{Introduction}
 \label{chapter:intro}
 
-From large corporations to the average user, computer and network environment security is an important requirement to which malware is a threat. Malicious software is a program that has been written by an attacker to fulfill a harmful intent. In order to achieve this, the program has to interract with the victim's operating system..
+From large corporations to the average user, computer and network environment security is an important requirement to which malware is a threat. Malicious software is a program that has been written by an attacker to fulfill a harmful intent. In order to achieve this, the program has to interact with the victim's operating system.
 
 The number of users of a specific operating system is directly correlated to the degree of interest malware writers take in developing software to target that specific operating system. Due to Linux's increasing popularity, better security for operating systems that are based on the Linux kernel has become a necessity. This supports the need for developing tools for Linux malware analysis and improving malware detection methods.
 
@@ -9,18 +9,18 @@ Earlier detection methods focused on analyzing the contents of the executable fi
 
 This resulted in a switch to developing behavior based detection systems that are independent from the exact contents of the executable file. Therefore, when analyzing malware samples, analysts started to search for program behavior patterns that suggest a malicious intent. In order for these patterns to work, programs need a higher-level common behavior specification.
 
-The system call interface meets this requirement as malware needs to interract with the operating system to achieve its goals and it is common to all malware. A typical malware example would be an executable file that replicates itself by reading its own file and then copying it to system directories. This can be captured in a behavior pattern which, compiled into malware specifications, can then be used by malware detectors in order to classify programs based on their behavior.
+The system call interface meets this requirement as malware needs to interact with the operating system to achieve its goals and it is common to all malware. A typical malware example would be an executable file that replicates itself by reading its own file and then copying it to system directories. This can be captured in a behavior pattern which, compiled into malware specifications, can then be used by malware detectors in order to classify programs based on their behavior.
 
 The project presented in this thesis, named \textbf{\project}, is a Linux tool for automatically searching for malicious program behavior patterns. This tool is a Linux implementation of the malware specification mining algorithm which identifies these behavior patterns by comparing known malware samples to known benign programs. These patterns are a collection of Linux system call parameter dependencies that capture the malicious behavior.
 
-The malware specification mining algorithm takes the system call execution traces for the malicious and benign programs as input and creates a graph for each program. The nodes in the graphs represent system calls and the edges show parameter dependencies between the nodes. The malspec-mining algorithm then the minimal contrast subgraph patterns for each pair of malicious and benign programs are maximally unioned together. The resulting set of graphs is the malware specification.
+The malware specification mining algorithm takes the system call execution traces for the malicious and benign programs as input and creates a graph for each program. The nodes in the graphs represent system calls and the edges show parameter dependencies between the nodes. The malspec mining algorithm computes the minimal contrast subgraph patterns for each pair of malicious and benign programs and then they are maximally unioned. The resulting set of graphs is the malware specification.
 
 \project\ is intended to be used by malware specialists to help them analyze new malware samples. It can also be used as part of an automatic detection mechanism which classifies programs based on their behavior by using the malicious behavior specifications.
 
-Our implementation of the malspec-mining algorithm successfully identified malware specifications for the tested malware samples. These malspecs captured behaviour found in the malware samples but not in benign programs.
+Our implementation of the malspec mining algorithm successfully identified malware specifications for the tested malware samples. These malspecs captured behaviour found in the malware samples but not in benign programs.
 
 This thesis organized as follows: in \labelindexref{Chapter}{chapter:second} we describe the main types of malware threats, current detection types, methods that malware uses to avoid detection and a short presentation of the malware specification mining algorithm.
 
-In \labelindexref{Chapter}{chapter:third} we define several notions used in the algorithm, a detailed view of the malspec-mining algorithm and we reveal our own architecture. \labelindexref{Chapter}{chapter:fourth} presents the implementation details for each element of architecture from kernel modules to userspace application.
+In \labelindexref{Chapter}{chapter:third} we define several notions used in the algorithm, a detailed view of the malspec mining algorithm and we reveal our own architecture. \labelindexref{Chapter}{chapter:fourth} presents the implementation details for each element of architecture from the kernel modules the to userspace application.
 
 \labelindexref{Chapter}{chapter:fifth} describes our test environment, explains a short test scenario and how the algorithm works and shows the results we obtained with our implementation on actual malware samples. \labelindexref{Chapter}{chapter:sixth} presents the conclusions and future work.

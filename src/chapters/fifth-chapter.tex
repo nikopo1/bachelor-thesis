@@ -74,7 +74,7 @@ As pointed out by Burguers \textit{et al.} in \cite{crowdroid-malware-android}, 
 
 Therefore, we used two sets of system calls to monitor the malicious and benign programs: a smaller set which was indicated by Burguers \textit{et al.} in their paper about behavior-based detection on Android \cite{crowdroid-malware-android} and a larger set which contained other system calls that might be used for malicious purposes.
 
-The larger set is a superset of the other and has more system calls that use with file descriptors and with socket communication. Only a part of this XML file has been added to this paper as \labelindexref{Appendix}{lst:syscalls-xml} because the original file was two large.
+The larger set is a superset of the other and has more system calls that use file descriptors and perform socket communication. Only a part of this XML file has been added to this paper as \labelindexref{Appendix}{lst:syscalls-xml} because the original file was two large.
 
 The results for each set of system calls\abbrev{syscall}{system call} can be seen in the following two tables, one per set. The set of benign programs we considered for testing consisted of: \code{ls}, \code{lsmod}, \code{ping} and \code{cat}.
 
@@ -108,9 +108,9 @@ In \labelindexref{Table}{table:mal-analysis-android} and \labelindexref{Table}{t
 \end{table}
 \end{center}
 
-In \labelindexref{Table}{table:mal-analysis-android}, we show the results for 8 malware samples. Although the initial collection of malware samples had 20 samples, some samples could not be tested because the operating system on our VM did not have all the shared libraries it required in order to run. Also, other samples were actually tools for flooding a range of ip addresses in a network.
+In \labelindexref{Table}{table:mal-analysis-android}, we show the results for 9 malware samples. Although the initial collection of malware samples had 20 samples, some samples could not be tested because the operating system on our VM did not have all the shared libraries they required in order to run. Also, other samples were actually tools for flooding a range of ip addresses in a network.
 
-\code{Virus.Linux.Osf.8759} could not be compared to the set of benign programs because it infected the benign programs. Due to the fac that this particular sample inserted itself into the benign programs before we extracted their trace, the analysis was not relevant because the programs already contained malicious behavior. Also, it had a specific feature from the other malware samples, it opened the system call interceptor driver.
+\code{Virus.Linux.Osf.8759} could not be compared to the set of benign programs because it infected the benign programs. Due to the fact that this particular sample inserted itself into the benign programs before we extracted their trace, the analysis was not relevant because the programs already contained malicious behavior. Also, it had a specific feature from the other malware samples, it accessed the system call interceptor driver.
 
 We compared the system calls that the \code{ls} command, which is part of the benign program set, made before and after the \code{Virus.Linux.Osf.8759} sample was run. Although, in appearance, the behavior of the command was the same, in fact it made additional calls to \code{fork}, \code{socket}, \code{listen}, \code{bind} and \code{pipe}. These system calls were not a part of the initial program trace before the sample was run.
 
@@ -138,13 +138,13 @@ Most of the samples generated dependency graphs with a very small number of node
 \end{table}
 \end{center}
 
-Analysis results for the larger set of system calls is shown in \labelindexref{Table}{table:mal-analysis-all}. The total analysis took longer due to the fact that the generated dependence graphs were larger, especially in the case of the benign programs.
+Analysis results for the larger set of system calls is shown in \labelindexref{Table}{table:mal-analysis-all}. The total analysis took longer due to the fact that the generated dependency graphs were larger, especially in the case of the benign programs.
 
-Our implementation succeeded in obtaining malspecs for the analyzed malware samples. The most remarcable result was for the \code{Virus.Linux.Radix} sample, although it had a shorter analysis time in comparison to ther samples. The malspec it returned consisted of two graphs.
+Our implementation succeeded in obtaining malspecs for the analyzed malware samples. The most remarcable result was for the \code{Virus.Linux.Radix} sample, although it had a shorter analysis time in comparison to other samples. The malspec it returned consisted of two graphs.
 
 The first graph contains the following nodes: \code{open}, \code{read}, \code{write}. The \code{open} node had descriptor dependencies with the other two calls. The second graph contained two nodes: a \code{creat} system call and a call to \code{write}.
 
-Another interesting malware sample was \code{Virus.Linux.Radix} which inserted itself into the executable file for the \code{ls} command, \code{/bin/ls}, and \code{cp} command, \code{/bin/cp}. It also searched the current directory for executable files and it infected those as well.
+\code{Virus.Linux.Radix} also presented another interesting behavior pattern, it inserted itself into the executable file for the \code{ls} command, \code{/bin/ls}, and \code{cp} command, \code{/bin/cp}. It also searched the current directory for executable files and it infected those as well.
 
 \fig[scale=0.58]{src/img/node-aggregation-android.png}{img:node-aggregation-android}{Node aggregation for android.xml}
 
@@ -154,6 +154,10 @@ In \labelindexref{Figure}{img:mal-analysis-time} we present the analysis duratio
 
 \fig[scale=0.58]{src/img/mal-analysis-time.png}{img:mal-analysis-time}{Analysis time for android.xml samples}
 
-\labelindexref{Figure}{img:mal-memory-use} shows the memory use of \project\ for the android.xml test. Memory usage was measured by using \textbf{Valgrind} while also checking for potential memory leaks. It can be observed that the memory usage is proportional to the number of nodes of each malware sample. This was the expected result considering that all the malware samples were tested against the same benign programs which had a constant number of system calls.
+\labelindexref{Figure}{img:mal-memory-use} shows the memory use of \project\ for the android.xml test. Memory usage was measured by using \textbf{Valgrind} while also checking for potential memory leaks. 
+
+For each malware sample, the blue area, drawn according to the left vertical axis, shows how much memory was used by \project\ while the red area, drawn according to the right vertical axis, represents the number of nodes in the dependency graph.
+
+It can be observed that the memory usage is proportional to the number of nodes of each malware sample. This was the expected result considering that all the malware samples were tested against the same benign programs which had a constant number of system calls.
 
 \fig[scale=0.47]{src/img/mal-memory-use.png}{img:mal-memory-use}{Malsharp memory use for android.xml test}

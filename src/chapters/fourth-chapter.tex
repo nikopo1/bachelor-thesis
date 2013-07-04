@@ -10,11 +10,11 @@ The System Call Interceptor Driver (SCID\abbrev{SCID}{System Call Interceptor Dr
 
 The SCID registers itself as a character device named \textbf{scid} using the misc device interface provided by the Linux kernel. It also creates a symlink\abbrev{symlink}{symbolic link} to procfs\abbrev{procfs}{proc filesystem} that is used by the userspace part of the application for opening the device.
 
-This driver logs only the system call number and the arguments and return values. The system calls are intercepted by replacing the original value of entry in the system call table with the address of an interceptor function which will run the system call and it will perform the necessary logging.
+This driver logs only the system call number and the arguments and return values. The system calls are intercepted by replacing the original entry value in the system call table with the address of an interceptor function which will run the system call and it will perform the necessary logging.
 
 System call history is implemented with a queue, which contains the recorded system call values and the actual system call number. When an \code{ioctl} read call is received from userspace, it will remove and return the first entry in the queue. It is also possible to clear the entire log history if needed or to get the total number of entries from the queue.
 
-The kernel module uses the \code{syscall_params} struct to retrieve the parameters from the stack when intercepting system calls. The data structure returned by the kernel is called \code{sctrace_t} and it contains the system call number, a syscall_params struct with the argument values and the return value. \labelindexref{Listing}{lst:scid-struct} contains the definitions for the data structures used by the kernel module.
+The kernel module uses the \code{syscall_params} struct to retrieve the parameters from the stack when intercepting system calls. The data structure returned by the kernel is called \code{sctrace_t} and it contains the system call number, a \code{syscall_params} struct with the argument values and the return value. \labelindexref{Listing}{lst:scid-struct} contains the definitions for the data structures used by the kernel module.
 
 \lstset{language=C,caption=SCID data structures,label=lst:scid-struct}
 \begin{lstlisting}
@@ -55,7 +55,7 @@ The SCID module \code{ioctl} commands are defined using the macros provided by t
 \section{Network Interceptor}
 \label{fourth:ni}
 
-The Network Interceptor (NI\abbrev{NI}{Network Interceptor}) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
+The Network Interceptor (NI\abbrev{NI}{Network Interceptor}) is also a kernel module that can be configured in a similar manner to the SCID. This module uses kernel netfilter hooks to intercept packets on the PRE_ROUTING chain and it logs statistics such as total number of packets and total size transmitted.
 
 The NI is controlled through \code{ioctl} calls which receive a \code{intercept_info_t} struct containing the protocol, source and destination ports it should monitor. A zero value destination or source port enables monitoring for all the traffic.
 
@@ -77,7 +77,7 @@ The information gathered by the NI is not used in the determining the malware sp
 \section{Reading traces}
 \label{fourth:read-traces}
 
-The entries recorded by the SCID module do not contain any type and direction information about the system call. Therefore, in order to successfully identify def-use dependences, the type and direction have to be properly set in a \code{syscall_t} struct, which is defined below, before the graph is constructed.
+The entries recorded by the SCID module do not contain any type and direction information about the system call. Therefore, in order to successfully identify def-use dependencies, the type and direction have to be properly set in a \code{syscall_t} struct, which is defined in \labelindexref{Listing}{lst:param-struct}, before the graph is constructed.
 
 \lstset{language=C,caption=Parameter data structures,label=lst:param-struct}
 \begin{lstlisting}
@@ -98,28 +98,28 @@ typedef struct _syscall_t {
 
 The \code{syscall_t} struct contains an array of param structures with a maximum of 8 argument entries. The first 7 entries are used for the register values of the system call and the 8\ts{th} entry holds the return value. Possible argument directions are  in, out and inout, while data types considered are \code{int}, \code{unsigned int}, file descriptor, \code{char*}, \code{void*}, \code{unsigned short} and \code{size_t}.
 
-\project\ keeps system call decoding information in an XML file which contains for each system call the type and direction information for each register. The file is parsed using the open source library named \textbf{pugixml} \cite{pugixml-library}. 
+\project\ keeps the system call decoding information in an XML file which contains for each system call the type and direction information for each register. The file is parsed using the open source library named \textbf{pugixml} \cite{pugixml-library}. 
 
 We chose this library because the XML configuration files do not contain many entries and \textbf{pugixml} uses DOM representation. Also, it supports XPath queries, which we used to query information about particular system calls when we added type and direction information to the execution trace.
 
 \abbrev{DOM}{Document Object Model}
 
-Each program is run separately by creating a new process, making it yield the processor by waiting on a named semaphore and then replacing its image with \code{execve}. The new process has to be forced to yield the processor in order for the parent process to have sufficient time to set the child’s process pid as the target for the interceptor modules. Otherwise, a partial system call trace would be obtained instead and the results would be compromised. 
+Each program is run separately by creating a new process, making it yield the processor by waiting on a named semaphore and then replacing its image with \code{execve}. The new process has to be forced to yield the processor in order for the parent process to have sufficient time to set the child’s process pid as the target for the interceptor module. Otherwise, a partial system call trace would be obtained instead and the results would be compromised. 
 
 After the parent process has configured the kernel module to monitor its child process, it increments the semaphore to enable it to continue execution. After that, the parent process waits for the child process to end and then it starts reading the execution trace.
 
-\section{Building dependence graphs}
+\section{Building dependency graphs}
 \label{fourth:dep-graphs}
 
 The execution trace inputted is used to create a graph for the sample program. Each node of the graph will contain a \code{syscall_t} struct. On creation, each graph object receives an array of these structs from which to create the graph’s nodes.
 
-After the nodes are created, each pair of nodes is verified for def-use dependences and if such dependencies exist then a new edge is added in a vector as a pair of node pointers. To determine if a def-use dependency exists between two nodes, the two \code{param} arrays from the \code{syscall_t} structs are compared.
+After the nodes are created, each pair of nodes is verified for def-use dependencies and if such dependencies exist then a new edge is added in a vector as a pair of node pointers. To determine if a def-use dependency exists between two nodes, the two \code{param} arrays from the \code{syscall_t} structs are compared.
 
 In addition to system call information, each node contains a unique identification number (or index) in order to uniquely identify nodes within the same graph, even if they have the same system call number and argument values.
 
 Although file descriptors are returned as integer values in Linux, they are treated as different data types because integer values are a common argument type for system calls. 
 
-Treating file descriptors the same way as integers would result in false def-use dependences. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependence edge would be generated between this pair of nodes because the fd\abbrev{fd}{file descriptor} and the integer have the same value.
+Treating file descriptors the same way as integers would result in false def-use dependencies. If an \code{open} system call would return file descriptor number \code{3} and a \code{read} call on a different file would try to read \code{3} characters, then a false def-use dependency edge would be generated between this pair of nodes because the fd\abbrev{fd}{file descriptor} and the integer have the same value.
 
 Also, due to the fact that Linux reuses file descriptors, an additional check had to be implemented when generating the dependencies. Otherwise, false extra def-use edges would be generated that do not reflect actual argument dependencies.
 
@@ -146,7 +146,7 @@ Although the fourth constraint we added reduces the number of aggregated nodes, 
 
 McGregor's backtrack algorithm was implemented using recursion, although the original proposed pseudocode was iterative.
 
-The initial algorithm assumed that the graphs are not labelled, but in \cite{minimal-contrast-subgraph} labelling is presented as one of several powerfull prunning methods. Apart from aggregation, label prunning was also used in implementing the backtracking algorithm: only the nodes which shared the same label, the system call number, were tentatively paired.
+The initial algorithm assumed that the graphs are not labelled, but in \cite{minimal-contrast-subgraph} labelling is presented as one of several powerful pruning methods. Apart from aggregation, label pruning was also used in implementing the backtracking algorithm: only the nodes which shared the same label, the system call number, were tentatively paired.
 
 After the complements of the maximal common edge sets are computed, the minimal transversal of their union must be computed. In our implementation all the edges represent def-use dependencies, so there is no ``weight'' attached to the edge labels. Therefore, the minimal transversal of the graph can be computed by doing a simple breadth first search and keeping a list of the edges that added a new node to the queue.
 
