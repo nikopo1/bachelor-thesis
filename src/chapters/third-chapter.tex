@@ -1,4 +1,4 @@
-\chapter{Malspec Mining Algorithm, Malsharp Design}
+\chapter{Malspec Mining Algorithm Malsharp Design}
 \label{chapter:third}
 
 For a better grasp of the malspec mining algorithm and of the different graph algorithms it involves, we will now introduce the necessary definitions and theorems. Then, we will shortly describe the maximal common edge set algorithm which is used in the malspec mining algorithm. Finally we reveal the design aspects of \project\ and the main components.
@@ -10,7 +10,7 @@ The minimal contrast subgraph patterns used in the malspec mining algorithm were
 
 An \textbf{edge set} is a labelled graph, \textit{i.e.} a graph with labels attached to its vertices and edges, that has no isolated vertices.
 
-Given two graphs, $G_{p}$ and $G_{n}$, $C$ is a \textbf{common edge set} if and only if $C$ is an edge set and it is a common subgraph. $C$ is a \textbf{maximal common common edge set} if it is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
+Given two graphs, $G_{p}$ and $G_{n}$, $C$ is a \textbf{common edge set} if and only if $C$ is an edge set and it is a common subgraph. $C$ is a \textbf{maximal common edge set} if it is a common edge set of the two graphs and if and only if there does not exist a superset which is also a common edge set.
 
 The notions of \textbf{maximal common edge set} and \textbf{minimal contrast edge sets} are connected and we can determine the second set by obtaining the complement of the first with respect to the original graph and then computing the minimal transversal.
 
@@ -91,7 +91,7 @@ This module will be configured to monitor each malicious or benign program from 
 
 \subsection{Network Interceptor}
 
-The network interceptor is a module that was created for monitoring network traffic for specific protocols, such as: TCP, UDP and ICMP. It can controlled in a similar way to the system call interceptor module and it can be configured to monitor traffic by inspecting source or destination ports for TCP and UDP.
+The network interceptor is a module that was created for monitoring network traffic for specific protocols, such as: TCP, UDP and ICMP. It can be controlled in a similar way to the system call interceptor module and it can be configured to monitor traffic by inspecting source or destination ports for TCP and UDP.
 
 The information it gathers is currently not used in the malspec algorithm. Currently, it collects information such as the total number of packets sent or received and their total size.
 
@@ -99,7 +99,7 @@ The information it gathers is currently not used in the malspec algorithm. Curre
 
 \subsection{Graph builder}
 
-The role of the graph builder module it to create dependency graphs based on a set of system calls. These system calls, along with information on how to decode them, are written in a configuration XML file. The graph builder communicates with the system call interceptor module: it configures it and then it reads the system call trace.
+The role of the graph builder module is to create dependency graphs based on a set of system calls. These system calls, along with information on how to decode them, are written in a configuration XML file. The graph builder communicates with the system call interceptor module: it configures it and then it reads the system call trace.
 
 The graph builder will create a new process for each program that it will analyze. Before running the program it will configure the system call interceptor module to monitor the new process and then will wait for it to finish. Only system calls that have entries in the XML input file will be monitored.
 
