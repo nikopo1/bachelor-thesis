@@ -1,0 +1,980 @@
+Getting system call trace for /bin/lsmod
+Module                  Size  Used by
+scid                    3518  1 
+netconsole              6106  0 
+configfs               24731  2 netconsole
+coretemp                5842  0 
+vmw_balloon             5888  0 
+ppdev                   7036  0 
+e1000                 126105  0 
+microcode              12476  0 
+psmouse                86470  0 
+serio_raw               4616  0 
+parport_pc             24301  0 
+parport                32299  2 ppdev,parport_pc
+i2c_piix4              10107  0 
+shpchp                 25050  0 
+driver contains 21 syscall entries
+Benign graph:
+V[11]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=5), (9 sc=3), (10 sc=6), };
+E[5]={ (2, 3), (5, 6), (5, 7), (8, 9), (8, 10), };
+
+-1 -1 -1 -1 -1 -1 -1 -1 2 -1 3 
+-1 -1 -1 -1 -1 -1 -1 -1 5 6 7 
+-1 -1 -1 -1 -1 2 -1 3 5 6 7 
+-1 -1 -1 -1 -1 5 6 7 12 14 17 
+-1 -1 2 3 -1 5 6 7 12 14 17 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+--1644-- memcheck GC: 2048 nodes, 2048 survivors (100.0%)
+--1644-- memcheck GC: increase table size to 4096
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 1 
+0 2 
+0 1 
+0 -1 2 
+0 1 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+--1644-- memcheck GC: 4096 nodes, 3106 survivors ( 75.8%)
+--1644-- memcheck GC: increase table size to 8192
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 1 
+0 2 
+0 1 
+0 2 
+0 1 
+Analyzing malware vs /bin/ping 8.8.8.8 -c 1
+Getting system call trace for /bin/ping 8.8.8.8 -c 1
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_req=1 ttl=39 time=72.0 ms
+
+--- 8.8.8.8 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 72.033/72.033/72.033/0.000 ms
+driver contains 18 syscall entries
+Benign graph:
+V[9]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=6), };
+E[3]={ (2, 3), (5, 6), (5, 7), };
+
+-1 -1 -1 -1 -1 2 -1 3 -1 
+-1 -1 -1 -1 -1 5 6 7 -1 
+-1 -1 2 3 -1 5 6 7 -1 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+Analyzing malware vs /bin/cat /root/malware-sharpshooter/minimal/util.h
+Getting system call trace for /bin/cat /root/malware-sharpshooter/minimal/util.h
+/bin/cat: /root/malware-sharpshooter/minimal/util.h: Not a directory
+driver contains 20 syscall entries
+Benign graph:
+V[11]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=5), (9 sc=6), (10 sc=6), };
+E[3]={ (2, 3), (5, 6), (5, 7), };
+
+-1 -1 -1 -1 -1 2 -1 3 -1 -1 -1 
+-1 -1 -1 -1 -1 5 6 7 -1 -1 -1 
+-1 -1 2 3 -1 5 6 7 -1 -1 -1 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+Analyzing malware vs cat util.h
+Getting system call trace for cat util.h
+--1652-- REDIR: 0x41e1db0 (__GI_strncmp) redirected to 0x402717e (__GI_strncmp)
+--1652-- REDIR: 0x41dcc00 (stpcpy) redirected to 0x4027c04 (stpcpy)
+error running execve: No such file or directory
+==1652== 
+==1652== HEAP SUMMARY:
+==1652==     in use at exit: 61,382 bytes in 220 blocks
+==1652==   total heap usage: 31,753 allocs, 31,533 frees, 10,015,521 bytes allocated
+==1652== 
+==1652== Searching for pointers to 220 not-freed blocks
+==1652== Checked 144,056 bytes
+==1652== 
+==1652== 30 bytes in 1 blocks are possibly lost in loss record 5 of 24
+==1652==    at 0x4026351: operator new(unsigned int) (vg_replace_malloc.c:255)
+==1652==    by 0x40C6914: std::string::_Rep::_S_create(unsigned int, unsigned int, std::allocator<char> const&) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x40C8B63: char* std::string::_S_construct<char const*>(char const*, char const*, std::allocator<char> const&, std::forward_iterator_tag) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x40C92F4: std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x8053770: main (main.cpp:14)
+==1652== 
+==1652== 164 bytes in 5 blocks are possibly lost in loss record 12 of 24
+==1652==    at 0x4026351: operator new(unsigned int) (vg_replace_malloc.c:255)
+==1652==    by 0x40C6914: std::string::_Rep::_S_create(unsigned int, unsigned int, std::allocator<char> const&) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x40C7B97: std::string::_Rep::_M_clone(std::allocator<char> const&, unsigned int) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x40C7CC6: std::string::reserve(unsigned int) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x40C802B: std::string::append(char const*, unsigned int) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x40A6F61: std::basic_istream<char, std::char_traits<char> >& std::getline<char, std::char_traits<char>, std::allocator<char> >(std::basic_istream<char, std::char_traits<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, char) (in /usr/lib/libstdc++.so.6.0.14)
+==1652==    by 0x80539A2: main (basic_string.h:2540)
+==1652== 
+==1652== 32,824 bytes in 1 blocks are possibly lost in loss record 24 of 24
+==1652==    at 0x4025BD3: malloc (vg_replace_malloc.c:236)
+==1652==    by 0x80544E8: pugi::impl::(anonymous namespace)::default_allocate(unsigned int) (pugixml.cpp:142)
+==1652==    by 0x80546C6: pugi::impl::(anonymous namespace)::xml_allocator::allocate_page(unsigned int) (pugixml.cpp:301)
+==1652==    by 0x8054ABA: pugi::impl::(anonymous namespace)::xml_allocator::allocate_memory_oob(unsigned int, pugi::impl::(anonymous namespace)::xml_memory_page*&) (pugixml.cpp:425)
+==1652==    by 0x8054752: pugi::impl::(anonymous namespace)::xml_allocator::allocate_memory(unsigned int, pugi::impl::(anonymous namespace)::xml_memory_page*&) (pugixml.cpp:325)
+==1652==    by 0x8054D75: pugi::impl::(anonymous namespace)::allocate_node(pugi::impl::(anonymous namespace)::xml_allocator&, pugi::xml_node_type) (pugixml.cpp:536)
+==1652==    by 0x8054F21: pugi::impl::(anonymous namespace)::append_node(pugi::xml_node_struct*, pugi::impl::(anonymous namespace)::xml_allocator&, pugi::xml_node_type) (pugixml.cpp:581)
+==1652==    by 0x805740D: pugi::impl::(anonymous namespace)::xml_parser::parse(char*, pugi::xml_node_struct*, unsigned int, char) (pugixml.cpp:2401)
+==1652==    by 0x8057D4A: pugi::impl::(anonymous namespace)::xml_parser::parse(char*, unsigned int, pugi::xml_node_struct*, unsigned int) (pugixml.cpp:2632)
+==1652==    by 0x805DC8A: pugi::xml_document::load_buffer_impl(void*, unsigned int, unsigned int, pugi::xml_encoding, bool, bool) (pugixml.cpp:5247)
+==1652==    by 0x805DDB4: pugi::xml_document::load_buffer_inplace_own(void*, unsigned int, unsigned int, pugi::xml_encoding) (pugixml.cpp:5270)
+==1652==    by 0x8059CF0: pugi::impl::(anonymous namespace)::load_file_impl(pugi::xml_document&, _IO_FILE*, unsigned int, pugi::xml_encoding) (pugixml.cpp:3461)
+==1652== 
+==1652== LEAK SUMMARY:
+==1652==    definitely lost: 0 bytes in 0 blocks
+==1652==    indirectly lost: 0 bytes in 0 blocks
+==1652==      possibly lost: 33,018 bytes in 7 blocks
+==1652==    still reachable: 28,364 bytes in 213 blocks
+==1652==         suppressed: 0 bytes in 0 blocks
+==1652== Reachable blocks (those to which a pointer was found) are not shown.
+==1652== To see them, rerun with: --leak-check=full --show-reachable=yes
+==1652== 
+==1652== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 23 from 8)
+--1652-- 
+--1652-- used_suppression:     23 dl-hack3-cond-1
+==1652== 
+==1652== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 23 from 8)
+driver contains 10 syscall entries
+Benign graph:
+V[1]={ (0 sc=3), };
+E[0]={ };
+
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+0 2 
+0 2 
+
+Malspecs found:
+Malspec 0
+V[3]={ (0 sc=5), (1 sc=3), (2 sc=6), };
+E[2]={ (0, 1), (0, 2), };
+
+Malspec 1
+V[3]={ (0 sc=5), (1 sc=3), (2 sc=6), };
+E[2]={ (0, 1), (0, 2), };
+
+--1644-- REDIR: 0x40e4480 (operator delete[](void*)) redirected to 0x4025101 (operator delete[](void*))
+==1644== 
+==1644== HEAP SUMMARY:
+==1644==     in use at exit: 0 bytes in 0 blocks
+==1644==   total heap usage: 38,366 allocs, 38,366 frees, 10,807,875 bytes allocated
+==1644== 
+==1644== All heap blocks were freed -- no leaks are possible
+==1644== 
+==1644== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 23 from 8)
+--1644-- 
+--1644-- used_suppression:     23 dl-hack3-cond-1
+==1644== 
+==1644== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 23 from 8)

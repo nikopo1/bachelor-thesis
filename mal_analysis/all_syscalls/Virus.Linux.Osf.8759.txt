@@ -1,0 +1,59 @@
+root@spook:~/malware-sharpshooter# time ./minimal/main syscalls2.xml tmp/malware.exe minimal/benign_programs 
+Monitored syscalls are: 
+2 3 5 6 10 11 12 15 16 24 33 37 38 40 49 108 190 199 
+Getting system call trace for tmp/malware.exe
+driver contains 19 syscall entries
+Malware graph:V[19]={ (0 sc=11), (1 sc=33), (2 sc=33), (3 sc=5), (4 sc=6), (5 sc=33), (6 sc=5), (7 sc=3), (8 sc=6), (9 sc=5), (10 sc=3), (11 sc=6), (12 sc=5), (13 sc=3), (14 sc=108), (15 sc=3), (16 sc=6), (17 sc=2), (18 sc=3), };
+E[9]={ (3, 4), (6, 7), (6, 8), (9, 10), (9, 11), (12, 13), (12, 14), (12, 15), (12, 16), };
+
+Analyzing malware vs /bin/ls
+Getting system call trace for /bin/ls
+README.md    include	   minimal  pugixml-1.2  scid	       syscalls2.xml  tmp
+android.xml  linuxmalware  network  run_test.sh  syscalls.xml  test
+driver contains 41 syscall entries
+Benign graph:V[40]={ (0 sc=11), (1 sc=33), (2 sc=33), (3 sc=5), (4 sc=6), (5 sc=33), (6 sc=5), (7 sc=3), (8 sc=6), (9 sc=33), (10 sc=5), (11 sc=3), (12 sc=6), (13 sc=33), (14 sc=5), (15 sc=3), (16 sc=6), (17 sc=33), (18 sc=5), (19 sc=3), (20 sc=6), (21 sc=33), (22 sc=5), (23 sc=3), (24 sc=6), (25 sc=33), (26 sc=5), (27 sc=3), (28 sc=6), (29 sc=33), (30 sc=5), (31 sc=3), (32 sc=6), (33 sc=5), (34 sc=3), (35 sc=6), (36 sc=5), (37 sc=6), (38 sc=6), (39 sc=6), };
+E[18]={ (3, 4), (6, 7), (6, 8), (10, 11), (10, 12), (14, 15), (14, 16), (18, 19), (18, 20), (22, 23), (22, 24), (26, 27), (26, 28), (30, 31), (30, 32), (33, 34), (33, 35), (36, 37), };
+
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 4 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 6 -1 -1 7 8 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 4 6 -1 -1 7 8 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 6 7 8 10 -1 -1 11 12 -1 -1 
+-1 -1 -1 -1 -1 -1 3 -1 4 6 7 8 10 -1 -1 11 12 -1 -1 
+-1 -1 -1 -1 -1 -1 6 7 8 10 11 12 14 -1 -1 15 16 -1 -1 
+-1 -1 -1 3 4 -1 6 7 8 10 11 12 14 -1 -1 15 16 -1 -1 
+Analyzing malware vs /bin/lsmod
+Getting system call trace for /bin/lsmod
+Module                  Size  Used by
+scid                    3518  1 
+netconsole              6106  0 
+configfs               24731  2 netconsole
+coretemp                5842  0 
+vmw_balloon             5888  0 
+e1000                 126105  0 
+psmouse                86470  0 
+ppdev                   7036  0 
+serio_raw               4616  0 
+microcode              12476  0 
+i2c_piix4              10107  0 
+parport_pc             24301  0 
+parport                32299  2 ppdev,parport_pc
+shpchp                 25050  0 
+driver contains 13 syscall entries
+Benign graph:V[12]={ (0 sc=11), (1 sc=33), (2 sc=33), (3 sc=5), (4 sc=6), (5 sc=33), (6 sc=5), (7 sc=3), (8 sc=6), (9 sc=5), (10 sc=3), (11 sc=6), };
+E[5]={ (3, 4), (6, 7), (6, 8), (9, 10), (9, 11), };
+
+-1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 4 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 6 7 8 
+-1 -1 -1 -1 -1 -1 3 -1 4 6 7 8 
+-1 -1 -1 -1 -1 -1 6 7 8 9 10 11 
+-1 -1 -1 3 4 -1 6 7 8 9 10 11 
+
+Malspecs found:
+Malspec 0
+V[11]={ (0 sc=11), (1 sc=33), (2 sc=33), (3 sc=33), (4 sc=5), (5 sc=3), (6 sc=108), (7 sc=3), (8 sc=6), (9 sc=2), (10 sc=3), };
+E[4]={ (4, 5), (4, 6), (4, 7), (4, 8), };
+
+
+real	53m31.136s
+user	53m4.390s
+sys	0m0.179s

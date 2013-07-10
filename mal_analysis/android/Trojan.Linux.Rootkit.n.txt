@@ -1,0 +1,117 @@
+Monitored syscalls are: 
+3 5 6 15 16 33 
+Getting system call trace for ./tmp/malware.exe
+driver contains 12 syscall entries
+Malware graph:
+V[12]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=33), (9 sc=5), (10 sc=3), (11 sc=6), };
+E[5]={ (2, 3), (5, 6), (5, 7), (9, 10), (9, 11), };
+
+Analyzing malware vs /bin/ls
+Getting system call trace for /bin/ls
+README.md	  android.xml  minimal	pugixml-1.2  scid	   test      tmp
+all_syscalls.xml  include      network	run_test.sh  syscalls.xml  test.xml
+driver contains 40 syscall entries
+Benign graph:
+V[39]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=33), (9 sc=5), (10 sc=3), (11 sc=6), (12 sc=33), (13 sc=5), (14 sc=3), (15 sc=6), (16 sc=33), (17 sc=5), (18 sc=3), (19 sc=6), (20 sc=33), (21 sc=5), (22 sc=3), (23 sc=6), (24 sc=33), (25 sc=5), (26 sc=3), (27 sc=6), (28 sc=33), (29 sc=5), (30 sc=3), (31 sc=6), (32 sc=5), (33 sc=3), (34 sc=6), (35 sc=5), (36 sc=6), (37 sc=6), (38 sc=6), };
+E[18]={ (2, 3), (5, 6), (5, 7), (9, 10), (9, 11), (13, 14), (13, 15), (17, 18), (17, 19), (21, 22), (21, 23), (25, 26), (25, 27), (29, 30), (29, 31), (32, 33), (32, 34), (35, 36), };
+
+-1 -1 -1 -1 -1 -1 -1 -1 -1 2 -1 3 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 5 6 7 
+-1 -1 -1 -1 -1 2 -1 3 -1 5 6 7 
+-1 -1 -1 -1 -1 5 6 7 -1 9 10 11 
+-1 -1 2 3 -1 5 6 7 -1 9 10 11 
+Analyzing malware vs /bin/lsmod
+Getting system call trace for /bin/lsmod
+Module                  Size  Used by
+scid                    3518  1 
+netconsole              6106  0 
+configfs               24731  2 netconsole
+coretemp                5842  0 
+vmw_balloon             5888  0 
+ppdev                   7036  0 
+e1000                 126105  0 
+microcode              12476  0 
+psmouse                86470  0 
+serio_raw               4616  0 
+parport_pc             24301  0 
+parport                32299  2 ppdev,parport_pc
+i2c_piix4              10107  0 
+shpchp                 25050  0 
+driver contains 12 syscall entries
+Benign graph:
+V[11]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=5), (9 sc=3), (10 sc=6), };
+E[5]={ (2, 3), (5, 6), (5, 7), (8, 9), (8, 10), };
+
+-1 -1 -1 -1 -1 -1 -1 -1 2 -1 3 
+-1 -1 -1 -1 -1 -1 -1 -1 5 6 7 
+-1 -1 -1 -1 -1 2 -1 3 5 6 7 
+-1 -1 -1 -1 -1 5 6 7 9 10 11 
+-1 -1 2 3 -1 5 6 7 9 10 11 
+Analyzing malware vs /bin/ping 8.8.8.8 -c 1
+Getting system call trace for /bin/ping 8.8.8.8 -c 1
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_req=1 ttl=39 time=368 ms
+
+--- 8.8.8.8 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 368.238/368.238/368.238/0.000 ms
+driver contains 9 syscall entries
+Benign graph:
+V[9]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=6), };
+E[3]={ (2, 3), (5, 6), (5, 7), };
+
+-1 -1 -1 -1 -1 2 -1 3 -1 
+-1 -1 -1 -1 -1 5 6 7 -1 
+-1 -1 2 3 -1 5 6 7 -1 
+Analyzing malware vs /bin/cat /root/malware-sharpshooter/minimal/util.h
+Getting system call trace for /bin/cat /root/malware-sharpshooter/minimal/util.h
+#ifndef _UTIL_H_
+#define _UTIL_H_
+#include <unistd.h>
+#include <stdio.h>
+#include <error.h>
+
+#define SCID_DEVICE_PATH	"/proc/scid"
+#define DIE(failcondition, errormsg)		\
+	do {					\
+		if((failcondition)) {		\
+			perror((errormsg));	\
+			_exit(-1);		\
+		}				\
+	} while(0)
+
+
+#endif
+driver contains 14 syscall entries
+Benign graph:
+V[13]={ (0 sc=33), (1 sc=33), (2 sc=5), (3 sc=6), (4 sc=33), (5 sc=5), (6 sc=3), (7 sc=6), (8 sc=5), (9 sc=3), (10 sc=6), (11 sc=6), (12 sc=6), };
+E[5]={ (2, 3), (5, 6), (5, 7), (8, 9), (8, 10), };
+
+-1 -1 -1 -1 -1 -1 -1 -1 -1 2 -1 3 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 5 6 7 
+-1 -1 -1 -1 -1 2 -1 3 -1 5 6 7 
+-1 -1 -1 -1 -1 5 6 7 -1 8 9 10 
+-1 -1 2 3 -1 5 6 7 -1 8 9 10 
+Analyzing malware vs cat util.h
+Getting system call trace for cat util.h
+error running execve: No such file or directory
+driver contains 1 syscall entries
+Benign graph:
+V[1]={ (0 sc=6), };
+E[0]={ };
+
+0 2 
+0 -1 2 
+0 1 2 
+0 -1 2 
+0 1 2 
+
+Malspecs found:
+Malspec 0
+V[3]={ (0 sc=5), (1 sc=3), (2 sc=6), };
+E[2]={ (0, 1), (0, 2), };
+
+
+real	0m0.558s
+user	0m0.005s
+sys	0m0.112s
